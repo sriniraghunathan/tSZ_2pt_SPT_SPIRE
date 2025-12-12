@@ -135,25 +135,30 @@ def get_data_vectors(lmin_lmax_arr):
 
     return np.asarray( data )
 
-def get_model_vectors(lmin_lmax_arr, param_dict_sampler):
+def get_model_vectors(lmin_lmax_arr, param_dict_sampler, sim_or_data_tsz = 'cibmindata_tsz'):
     model = []
     for bincntr, l1l2 in enumerate( lmin_lmax_arr ):
         ##print(l1l2)
         l1, l2 = l1l2
-        ppp_name = 'rho_tsz_cib_%s' %(bincntr+1)
+        if param_dict_sampler is not None:
+            ppp_name = 'rho_tsz_cib_%s' %(bincntr+1)
+            curr_rho_tsz_cib = param_dict_sampler[ppp_name]
+        else:
+            curr_rho_tsz_cib = None
+
         curr_rho_tsz_cib_linds = np.where( (tmpels>=l1) & (tmpels<l2) )[0]
         
         sa_arr = tools.get_sim_arrary(res_dic, key_for_sima, which_sim) - undesired_comp_for_sima
         sb_arr = tools.get_sim_arrary(res_dic, key_for_simb, which_sim) - undesired_comp_for_simb
         
-        sa_arr, sb_arr = tools.account_for_tsz_cib_in_sims(param_dict_sampler[ppp_name], sa_arr, sb_arr, 
+        sa_arr, sb_arr = tools.account_for_tsz_cib_in_sims(, sa_arr, sb_arr, 
                                                            sim_ps_dic, 
                                                            bands, 
                                                            wl_dic, 
                                                            key_for_sima, key_for_simb,
                                                            sim_tsz_cib_estimate_dic,
                                                            total_sims_for_tsz_cib = total_sims_for_tsz_cib, 
-                                                           sim_or_data_tsz = tmpiter_key,
+                                                           sim_or_data_tsz = sim_or_data_tsz,
                                                            reqd_linds = curr_rho_tsz_cib_linds, 
                                                           )
 
@@ -174,7 +179,7 @@ def get_tsz_cib_corr_likelihood(**param_values):
     for pcntr, ppp in enumerate( param_names ):
         param_dict_sampler[ppp] = param_values[pcntr]
     
-    model = get_model_vectors(lmin_lmax_arr, param_dict_sampler)
+    model = get_model_vectors(lmin_lmax_arr, param_dict_sampler, sim_or_data_tsz = tmpiter_key)
     ##print(data.shape, model.shape, curr_diff_cov.shape); sys.exit()
     
 
