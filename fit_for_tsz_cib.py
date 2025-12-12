@@ -151,7 +151,7 @@ def get_model_vectors(lmin_lmax_arr, param_dict_sampler, sim_or_data_tsz = 'cibm
         sa_arr = tools.get_sim_arrary(res_dic, key_for_sima, which_sim) - undesired_comp_for_sima
         sb_arr = tools.get_sim_arrary(res_dic, key_for_simb, which_sim) - undesired_comp_for_simb
         
-        sa_arr, sb_arr = tools.account_for_tsz_cib_in_sims(, sa_arr, sb_arr, 
+        sa_arr, sb_arr = tools.account_for_tsz_cib_in_sims(curr_rho_tsz_cib, sa_arr, sb_arr, 
                                                            sim_ps_dic, 
                                                            bands, 
                                                            wl_dic, 
