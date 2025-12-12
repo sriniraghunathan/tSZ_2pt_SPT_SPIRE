@@ -235,52 +235,6 @@ updated_info, sampler = cobaya.run(input_info, force = force_resampling, debug =
 print('Done.')
 
 
-# In[ ]:
-
-
-
-
-
-# In[108]:
-
-
-burn_in_fraction = 0.2
-rcParams['text.usetex'] = False
-chain_name_arr = ['tsz_cib_corr_samples_1bins', 'tsz_cib_corr_samples_2bins']
-for chain_name in chain_name_arr:
-    chain_fd_and_name = 'results/chains/%s/%s' %(chain_name, chain_name)
-    curr_samples = getdist.mcsamples.loadMCSamples( chain_fd_and_name )
-    curr_samples.removeBurn( burn_in_fraction )
-
-
-
-    
-    if chain_name == 'tsz_cib_corr_samples_1bins': 
-        g = plots.get_single_plotter(width_inch = 3)
-        g.plot_1d( curr_samples, 'rho_tsz_cib_1')
-    else:
-        
-        total_bins = int( chain_name.split('_')[-1].replace('bins', '') )
-        params_to_plot = []
-        for binno in range( total_bins ):
-            params_to_plot.append( 'rho_tsz_cib_%s' %(binno+1) )
-
-        for ppp in params_to_plot:
-            g = plots.get_single_plotter(width_inch = 3)
-            g.plot_1d( curr_samples, ppp)
-
-
-        clf()
-        g.triangle_plot(curr_samples, params=params_to_plot, 
-                        contour_colors=['black'], 
-                        framealpha = 1., 
-                        filled=True,
-                        )
-        
-        show()        
-        
-
-
 
 
 
