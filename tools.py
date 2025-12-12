@@ -222,7 +222,7 @@ def get_covs_for_difference_vectors_v1(binned_el, m1_comb, m2_comb,
 
 def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, wl_dic, m1, m2, sim_tsz_cib_estimate_dic, total_sims_for_tsz_cib = 50, 
     sim_or_data_tsz = 'cibmindata_tsz',
-    reqd_linds = None):
+    reqd_linds = None, ):
     for tmpsimno in range(total_sims_for_tsz_cib):
 
         """
@@ -255,7 +255,11 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
                     cl_tsz = sim_tsz_cib_estimate_dic['cl_yy_fromcibmindata'] * curr_tsz_compton_y_fac**2. * 1e6
 
                 #tszXCIB
-                cl_cib_tsz = -rho_tsz_cib * np.sqrt( cl_cib * cl_tsz )
+                if rho_tsz_cib is not None:
+                    cl_cib_tsz = -rho_tsz_cib * np.sqrt( cl_cib * cl_tsz )
+                else:
+                    assert sim_or_data_tsz == 'sim_tsz'
+                    cl_cib_tsz = sim_ps_dic[tmpsimno][(band1, band2)]['tsz_cib']
 
                 cl_tsz_cib_dic['TT'][(band1, band2)] = cl_cib_tsz
 
