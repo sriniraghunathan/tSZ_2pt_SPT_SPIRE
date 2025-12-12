@@ -23,85 +23,6 @@ logging.getLogger().setLevel(logging.ERROR)
 from pylab import *
 import tools
 
-
-# In[42]:
-
-
-rcParams['figure.dpi'] = 150
-##rcParams['figure.facecolor'] = 'white'
-#plot(); show()
-
-
-# In[5]:
-
-
-def make_ver_shades(ax, yarr, colorval = 'gray', alphaval = 0.05, zorder = -10):
-    axhline(0., lw = 0.5, alpha = 0.2)
-    delta_y = np.diff(yarr)[0]
-    for ycntr, yval in enumerate( yarr ):
-        if ycntr%2 == 0:
-            y1 = yarr[ycntr] - delta_y/2.
-            y2 = yarr[ycntr] + delta_y/2.
-            axvspan(y1, y2, color = colorval, alpha = alphaval, zorder = zorder)
-    return ax
-
-def format_axis(ax, fx, fy, maxxloc=None, maxyloc = None):
-    """
-    function to format axis fontsize.
-
-
-    Parameters
-    ----------
-    ax: subplot axis.
-    fx: fontsize for xaxis.
-    fy: fontsize for yaxis.
-    maxxloc: total x ticks.
-    maxyloc: total y ticks.
-
-    Returns
-    -------
-    formatted axis "ax".
-    """
-    for label in ax.get_xticklabels(): label.set_fontsize(fx)
-    for label in ax.get_yticklabels(): label.set_fontsize(fy)
-    if maxyloc is not None:
-        ax.yaxis.set_major_locator(MaxNLocator(nbins=maxxloc))
-    if maxxloc is not None:
-        ax.xaxis.set_major_locator(MaxNLocator(nbins=maxxloc))
-        
-    ax.tick_params(which = 'major', direction='in', length=3, width=1.)
-    ax.tick_params(which = 'minor', direction='in', length=1., width=1.)
-
-    return ax
-
-
-def add_subplot_axes(ax,rect,axisbg='w'):
-    fig = plt.gcf()
-    box = ax.get_position()
-    width = box.width
-    height = box.height
-    inax_position  = ax.transAxes.transform(rect[0:2])
-    transFigure = fig.transFigure.inverted()
-    infig_position = transFigure.transform(inax_position)    
-    x = infig_position[0]
-    y = infig_position[1]
-    width *= rect[2]
-    height *= rect[3]  # <= Typo was here
-    subax = fig.add_axes([x,y,width,height])#,axisbg=axisbg)
-    x_labelsize = subax.get_xticklabels()[0].get_size()
-    y_labelsize = subax.get_yticklabels()[0].get_size()
-    x_labelsize *= rect[2]**0.5
-    y_labelsize *= rect[3]**0.5
-    #subax.xaxis.set_tick_params(labelsize=x_labelsize)
-    #subax.yaxis.set_tick_params(labelsize=y_labelsize)
-    return subax
-
-
-# # SNR calculations
-
-# In[6]:
-
-
 from scipy.stats import chi2
 #fname = 'results/power_spectra_lmin500_lmax7000_deltal250/100d_tsz_final_estimate.npy'
 #fname = 'results/power_spectra_lmin500_lmax7000_deltal250/100d_tsz_final_estimate_beamrc5.1_noslope.npy'
@@ -149,16 +70,6 @@ for ilc_keyname in ['ymv', 'ycibfree']:
 #full_stat_corr = corr_from_cov(full_stat_cov)
 ##imshow(full_stat_corr); colorbar(); show()
 linds = np.arange(len(tmpels))
-if (0):
-    #print( linds, tmpels[linds] )
-    #linds = np.where(tmpels<=5000)[0]
-    #linds = np.where(tmpels<4000)[0]
-    #linds = np.where(tmpels<3500)[0]
-    #linds = np.where(tmpels<4000)[0]
-    #linds = np.where( (tmpels>3000) & (tmpels<5000) )[0]
-    pass
-
-
 ilc_keyname1, ilc_keyname2, ilc_keyname3 = ('ymv', 'ymv'), ('ycibfree', 'ycibfree'), ('ycibfree', 'ymv')
 tmpels = tmpels[linds]
 curr_dl_fac = tmpels * (tmpels+1)/2/np.pi * 1e12
@@ -179,14 +90,22 @@ which_sim = 'cmb_tsz_ksz_noise_uncorrcib_uncorrrad_rc5.1_noslope_spt3gbeams_comp
 #lmin_lmax_arr = [(500, 1000), (1000, 1500), (1500, 2000), (2000, 2500), (2500, 3000)]
 lmin_lmax_arr = [(500, 1000), (1000, 1500), (1500, 2000), (2000, 2500), (2500, 3000), (3000, 5000)]
 
-m1, m2 = ('ymv', 'ymv'), ('ycibfree', 'ycibfree')
-undesired_comp_for_sima, undesired_comp_for_simb = d1_undesired_comp, d2_undesired_comp
-curr_diff_vector = d1-d2
-key_for_sima, key_for_simb = ilc_keyname1, ilc_keyname2
+if which_ilc_sets == 'mv-cibfree':
+    undesired_comp_for_sima, undesired_comp_for_simb = d1_undesired_comp, d2_undesired_comp
+    curr_diff_vector = d1-d2
+    key_for_sima, key_for_simb = ilc_keyname1, ilc_keyname2
+elif which_ilc_sets == 'mv-mvcrosscibfree':
+    undesired_comp_for_sima, undesired_comp_for_simb = d1_undesired_comp, d3_undesired_comp
+    curr_diff_vector = d1-d3
+    key_for_sima, key_for_simb = ilc_keyname1, ilc_keyname3
+elif which_ilc_sets == 'cibfree-mvcrosscibfree':
+    undesired_comp_for_sima, undesired_comp_for_simb = d2_undesired_comp, d3_undesired_comp
+    curr_diff_vector = d2-d3
+    key_for_sima, key_for_simb = ilc_keyname2, ilc_keyname3
 #-----------------------------------
 import cobaya
 
-curr_full_cov = tools.get_covs_for_difference_vectors(tmpels, m1, m2, op_ps_1d_dic, lmin_lmax_arr = lmin_lmax_arr)
+curr_full_cov = tools.get_covs_for_difference_vectors(tmpels, key_for_sima, key_for_simb, op_ps_1d_dic, lmin_lmax_arr = lmin_lmax_arr)
 ##print(curr_full_cov.shape); sys.exit()
 tmpreclen = int( len(curr_full_cov)/2 )
 c_aa = curr_full_cov[:tmpreclen, :tmpreclen]
@@ -223,7 +142,7 @@ def get_model_vectors(lmin_lmax_arr, param_dict_sampler):
                                                            sim_ps_dic, 
                                                            bands, 
                                                            wl_dic, 
-                                                           m1, m2,
+                                                           key_for_sima, key_for_simb,
                                                            sim_tsz_cib_estimate_dic,
                                                            total_sims_for_tsz_cib = total_sims_for_tsz_cib, 
                                                            sim_or_data_tsz = tmpiter_key,
@@ -279,7 +198,13 @@ for binno in range(total_bins):
 debug_cobaya = False #True ##False ##True
 force_resampling = True
 GRstat = 0.01
-chain_name = 'tsz_cib_corr_samples_%sbins' %(total_bins)
+#chain_name = 'tsz_cib_corr_samples_%sbins' %(total_bins)
+lmin_lmax_arr_str = 'lbins'
+for l1l2 in lmin_lmax_arr:
+    l1, l2 = l1l2
+    l1l2_str = '%sto%s' %(l1, l2)
+    lmin_lmax_arr_str = '%s-%s' %(lmin_lmax_arr_str, l1l2_str)
+chain_name = 'tszcibcorr_%s_totalbins%s_%s' %(which_ilc_sets, total_bins, lmin_lmax_arr_str)
 chain_fd_and_name = 'results/chains/%s/%s' %(chain_name, chain_name)
 
 input_info = {}
