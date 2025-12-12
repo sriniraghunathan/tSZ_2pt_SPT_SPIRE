@@ -20,10 +20,17 @@ import warnings, logging
 warnings.filterwarnings("ignore")
 logging.getLogger().setLevel(logging.ERROR)
 
+
 from pylab import *
 import tools
 
 from scipy.stats import chi2
+
+which_ilc_sets = sys.argv[1]
+assert which_ilc_sets in ['mv-cibfree', 'mv-mvcrosscibfree', 'cibfree-mvcrosscibfree']
+totthreads = 10
+os.putenv('OMP_NUM_THREADS',str(totthreads))
+
 #fname = 'results/power_spectra_lmin500_lmax7000_deltal250/100d_tsz_final_estimate.npy'
 #fname = 'results/power_spectra_lmin500_lmax7000_deltal250/100d_tsz_final_estimate_beamrc5.1_noslope.npy'
 fname = 'results/power_spectra_lmin500_lmax5000_deltal500/100d_tsz_final_estimate_beamrc5.1_noslope.npy'
