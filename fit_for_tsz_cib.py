@@ -1,0 +1,353 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# # Make plots
+
+# In[1]:
+
+
+# # Import required modules
+
+# In[3]:
+
+
+import numpy as np, os, sys, glob, tools
+
+import getdist, cobaya
+from getdist import plots, MCSamples
+
+import warnings, logging
+warnings.filterwarnings("ignore")
+logging.getLogger().setLevel(logging.ERROR)
+
+from pylab import *
+import tools
+
+
+# In[42]:
+
+
+rcParams['figure.dpi'] = 150
+##rcParams['figure.facecolor'] = 'white'
+#plot(); show()
+
+
+# In[5]:
+
+
+def make_ver_shades(ax, yarr, colorval = 'gray', alphaval = 0.05, zorder = -10):
+    axhline(0., lw = 0.5, alpha = 0.2)
+    delta_y = np.diff(yarr)[0]
+    for ycntr, yval in enumerate( yarr ):
+        if ycntr%2 == 0:
+            y1 = yarr[ycntr] - delta_y/2.
+            y2 = yarr[ycntr] + delta_y/2.
+            axvspan(y1, y2, color = colorval, alpha = alphaval, zorder = zorder)
+    return ax
+
+def format_axis(ax, fx, fy, maxxloc=None, maxyloc = None):
+    """
+    function to format axis fontsize.
+
+
+    Parameters
+    ----------
+    ax: subplot axis.
+    fx: fontsize for xaxis.
+    fy: fontsize for yaxis.
+    maxxloc: total x ticks.
+    maxyloc: total y ticks.
+
+    Returns
+    -------
+    formatted axis "ax".
+    """
+    for label in ax.get_xticklabels(): label.set_fontsize(fx)
+    for label in ax.get_yticklabels(): label.set_fontsize(fy)
+    if maxyloc is not None:
+        ax.yaxis.set_major_locator(MaxNLocator(nbins=maxxloc))
+    if maxxloc is not None:
+        ax.xaxis.set_major_locator(MaxNLocator(nbins=maxxloc))
+        
+    ax.tick_params(which = 'major', direction='in', length=3, width=1.)
+    ax.tick_params(which = 'minor', direction='in', length=1., width=1.)
+
+    return ax
+
+
+def add_subplot_axes(ax,rect,axisbg='w'):
+    fig = plt.gcf()
+    box = ax.get_position()
+    width = box.width
+    height = box.height
+    inax_position  = ax.transAxes.transform(rect[0:2])
+    transFigure = fig.transFigure.inverted()
+    infig_position = transFigure.transform(inax_position)    
+    x = infig_position[0]
+    y = infig_position[1]
+    width *= rect[2]
+    height *= rect[3]  # <= Typo was here
+    subax = fig.add_axes([x,y,width,height])#,axisbg=axisbg)
+    x_labelsize = subax.get_xticklabels()[0].get_size()
+    y_labelsize = subax.get_yticklabels()[0].get_size()
+    x_labelsize *= rect[2]**0.5
+    y_labelsize *= rect[3]**0.5
+    #subax.xaxis.set_tick_params(labelsize=x_labelsize)
+    #subax.yaxis.set_tick_params(labelsize=y_labelsize)
+    return subax
+
+
+# # SNR calculations
+
+# In[6]:
+
+
+from scipy.stats import chi2
+#fname = 'results/power_spectra_lmin500_lmax7000_deltal250/100d_tsz_final_estimate.npy'
+#fname = 'results/power_spectra_lmin500_lmax7000_deltal250/100d_tsz_final_estimate_beamrc5.1_noslope.npy'
+fname = 'results/power_spectra_lmin500_lmax5000_deltal500/100d_tsz_final_estimate_beamrc5.1_noslope.npy'
+res_dic = np.load(fname, allow_pickle=True).item()
+##print(res_dic.keys()); sys.exit()
+op_ps_1d_dic = res_dic['op_ps_1d_dic']
+full_stat_cov = res_dic['full_stat_cov']
+full_sys_cov_dic = res_dic['full_sys_cov_dic']
+m1m2_arr = [('ymv', 'ymv'), ('ycibfree', 'ycibfree'), ('ycibfree', 'ymv')]
+tmpels = res_dic[m1m2_arr[0]]['els']
+
+final_full_sys_cov = full_sys_cov_dic['cib_tweaked_spt_only_max_tweak_0.2'] + \
+                full_sys_cov_dic['rad_tweaked_max_tweak_0.2'] + \
+                full_sys_cov_dic['cmb_withspiretcalerror'] + \
+                full_sys_cov_dic['ksz']
+            
+full_cov = full_stat_cov + final_full_sys_cov
+
+#sim tszxCIB estimates
+sim_tsz_cib_estimate_fname = 'results/power_spectra_lmin500_lmax5000_deltal500/100d_tsz_final_estimate_beamrc5.1_noslope_sim_tszcib_estimates.npy'
+sim_tsz_cib_estimate_dic = np.load( sim_tsz_cib_estimate_fname, allow_pickle=True).item()
+#print(sim_tsz_cib_estimate_dic.keys()); sys.exit()
+
+total_sims_for_tsz_cib = 50
+sim_ps_dic = sim_tsz_cib_estimate_dic['sim_ps_dic']
+bands = sim_tsz_cib_estimate_dic['bands']
+ilc_1d_weights_dic = sim_tsz_cib_estimate_dic['ilc_1d_weights_dic']
+#cl_yy_fromcibmindata = sim_tsz_cib_estimate_dic['cl_yy_fromcibmindata']
+tmpiter_key = 'cibmindata_tsz' #'sim_tsz'
+
+wl_dic = {}
+for ilc_keyname in ['ymv', 'ycibfree']:
+    wl_arr = []
+    els = ilc_1d_weights_dic[ilc_keyname]['els']
+    for freq in ilc_1d_weights_dic[ilc_keyname]:
+        if freq == 'els': continue
+        binned_weights = ilc_1d_weights_dic[ilc_keyname][freq]                
+        wl = np.interp( tmpels, els, binned_weights )
+        wl_arr.append( wl )
+    wl_arr = np.asarray(wl_arr)
+    wl_dic[ilc_keyname] = wl_arr
+
+
+#full_stat_corr = corr_from_cov(full_stat_cov)
+##imshow(full_stat_corr); colorbar(); show()
+linds = np.arange(len(tmpels))
+if (0):
+    #print( linds, tmpels[linds] )
+    #linds = np.where(tmpels<=5000)[0]
+    #linds = np.where(tmpels<4000)[0]
+    #linds = np.where(tmpels<3500)[0]
+    #linds = np.where(tmpels<4000)[0]
+    #linds = np.where( (tmpels>3000) & (tmpels<5000) )[0]
+    pass
+
+
+ilc_keyname1, ilc_keyname2, ilc_keyname3 = ('ymv', 'ymv'), ('ycibfree', 'ycibfree'), ('ycibfree', 'ymv')
+tmpels = tmpels[linds]
+curr_dl_fac = tmpels * (tmpels+1)/2/np.pi * 1e12
+d1_undesired_comp = res_dic[ilc_keyname1]['sim'][linds]
+d2_undesired_comp = res_dic[ilc_keyname2]['sim'][linds]
+d3_undesired_comp = res_dic[ilc_keyname3]['sim'][linds]
+d1 = res_dic[ilc_keyname1]['data_final'][linds]
+d2 = res_dic[ilc_keyname2]['data_final'][linds]
+d3 = res_dic[ilc_keyname3]['data_final'][linds]
+reclen = len(d1)
+
+print('\n\n\n')
+#difference tests
+which_sim = 'cmb_tsz_ksz_noise_uncorrcib_uncorrrad_rc5.1_noslope_spt3gbeams_compdependent_half_splits'
+
+#lmin_lmax_arr = [(500, 3000)]
+#lmin_lmax_arr = [(500, 1500), (1500, 3000)]
+#lmin_lmax_arr = [(500, 1000), (1000, 1500), (1500, 2000), (2000, 2500), (2500, 3000)]
+lmin_lmax_arr = [(500, 1000), (1000, 1500), (1500, 2000), (2000, 2500), (2500, 3000), (3000, 5000)]
+
+m1, m2 = ('ymv', 'ymv'), ('ycibfree', 'ycibfree')
+undesired_comp_for_sima, undesired_comp_for_simb = d1_undesired_comp, d2_undesired_comp
+curr_diff_vector = d1-d2
+key_for_sima, key_for_simb = ilc_keyname1, ilc_keyname2
+#-----------------------------------
+import cobaya
+
+curr_full_cov = tools.get_covs_for_difference_vectors(tmpels, m1, m2, op_ps_1d_dic, lmin_lmax_arr = lmin_lmax_arr)
+##print(curr_full_cov.shape); sys.exit()
+tmpreclen = int( len(curr_full_cov)/2 )
+c_aa = curr_full_cov[:tmpreclen, :tmpreclen]
+c_bb = curr_full_cov[tmpreclen:, tmpreclen:]
+c_ab = curr_full_cov[tmpreclen:, :tmpreclen]
+curr_diff_cov = c_aa + c_bb - 2*c_ab
+##imshow(curr_diff_cov); colorbar(); show(); sys.exit()
+##print(curr_diff_cov.shape); sys.exit()
+
+def get_data_vectors(lmin_lmax_arr):
+    data = []
+    for bincntr, l1l2 in enumerate( lmin_lmax_arr ):
+        l1, l2 = l1l2
+        curr_rho_tsz_cib_linds = np.where( (tmpels>=l1) & (tmpels<l2) )[0]
+
+        #fitting
+        curr_data = curr_diff_vector[curr_rho_tsz_cib_linds]
+        data.extend( curr_data )
+
+    return np.asarray( data )
+
+def get_model_vectors(lmin_lmax_arr, param_dict_sampler):
+    model = []
+    for bincntr, l1l2 in enumerate( lmin_lmax_arr ):
+        ##print(l1l2)
+        l1, l2 = l1l2
+        ppp_name = 'rho_tsz_cib_%s' %(bincntr+1)
+        curr_rho_tsz_cib_linds = np.where( (tmpels>=l1) & (tmpels<l2) )[0]
+        
+        sa_arr = tools.get_sim_arrary(res_dic, key_for_sima, which_sim) - undesired_comp_for_sima
+        sb_arr = tools.get_sim_arrary(res_dic, key_for_simb, which_sim) - undesired_comp_for_simb
+        
+        sa_arr, sb_arr = tools.account_for_tsz_cib_in_sims(param_dict_sampler[ppp_name], sa_arr, sb_arr, 
+                                                           sim_ps_dic, 
+                                                           bands, 
+                                                           wl_dic, 
+                                                           m1, m2,
+                                                           sim_tsz_cib_estimate_dic,
+                                                           total_sims_for_tsz_cib = total_sims_for_tsz_cib, 
+                                                           sim_or_data_tsz = tmpiter_key,
+                                                           reqd_linds = curr_rho_tsz_cib_linds, 
+                                                          )
+
+        curr_diff_vector_sim_arr = sa_arr - sb_arr
+        curr_diff_vector_sim_arr = curr_diff_vector_sim_arr[25:]
+
+        #fitting
+        curr_model = np.mean( curr_diff_vector_sim_arr, axis = 0)[curr_rho_tsz_cib_linds]
+        model.extend( curr_model )
+            
+    return np.asarray( model )
+
+
+def get_tsz_cib_corr_likelihood(**param_values):
+    import copy
+    param_values = [param_values[p] for p in param_names]
+    param_dict_sampler = {}
+    for pcntr, ppp in enumerate( param_names ):
+        param_dict_sampler[ppp] = param_values[pcntr]
+    
+    model = get_model_vectors(lmin_lmax_arr, param_dict_sampler)
+    ##print(data.shape, model.shape, curr_diff_cov.shape); sys.exit()
+    
+
+    res = tools.get_likelihood(data, model, curr_diff_cov)
+    return res
+
+total_bins = len( lmin_lmax_arr )
+data = get_data_vectors(lmin_lmax_arr)
+
+rho_tsz_cib_ref_dict = {
+                "prior": {"min": -1., "max": 1.},
+                "ref": {"dist": "norm", "loc": 0.2, "scale": 0.2},
+                "proposal": 0.2,
+                "drop": False, 
+                "latex": r"\rho_{\rm tSZxCIB_binval}", 
+                }
+
+mcmc_input_params_info_dict = {}
+for binno in range(total_bins):
+    paramname = 'rho_tsz_cib_%s' %(binno+1)
+    mcmc_input_params_info_dict[paramname] = {}
+    for keyname in rho_tsz_cib_ref_dict:
+        mcmc_input_params_info_dict[paramname][keyname] = rho_tsz_cib_ref_dict[keyname]
+        if keyname == 'latex':
+            currval = mcmc_input_params_info_dict[paramname][keyname]
+            mcmc_input_params_info_dict[paramname][keyname] = currval.replace('binval', '%s' %(binno+1))
+
+
+debug_cobaya = False #True ##False ##True
+force_resampling = True
+GRstat = 0.01
+chain_name = 'tsz_cib_corr_samples_%sbins' %(total_bins)
+chain_fd_and_name = 'results/chains/%s/%s' %(chain_name, chain_name)
+
+input_info = {}
+input_info["params"] = mcmc_input_params_info_dict
+
+
+param_names = list(input_info["params"].keys())
+#print( param_names ); ###sys.exit()
+
+input_info["likelihood"] = {}
+input_info["likelihood"]["tsz_cib_fitting"] = {
+                "external": get_tsz_cib_corr_likelihood, 
+                "input_params": param_names,
+                }
+
+input_info["sampler"] = {"mcmc": {"drag": False, "Rminus1_stop": GRstat, "max_tries": 5000}}
+
+input_info["output"] = chain_fd_and_name
+updated_info, sampler = cobaya.run(input_info, force = force_resampling, debug = debug_cobaya)
+print('Done.')
+
+
+# In[ ]:
+
+
+
+
+
+# In[108]:
+
+
+burn_in_fraction = 0.2
+rcParams['text.usetex'] = False
+chain_name_arr = ['tsz_cib_corr_samples_1bins', 'tsz_cib_corr_samples_2bins']
+for chain_name in chain_name_arr:
+    chain_fd_and_name = 'results/chains/%s/%s' %(chain_name, chain_name)
+    curr_samples = getdist.mcsamples.loadMCSamples( chain_fd_and_name )
+    curr_samples.removeBurn( burn_in_fraction )
+
+
+
+    
+    if chain_name == 'tsz_cib_corr_samples_1bins': 
+        g = plots.get_single_plotter(width_inch = 3)
+        g.plot_1d( curr_samples, 'rho_tsz_cib_1')
+    else:
+        
+        total_bins = int( chain_name.split('_')[-1].replace('bins', '') )
+        params_to_plot = []
+        for binno in range( total_bins ):
+            params_to_plot.append( 'rho_tsz_cib_%s' %(binno+1) )
+
+        for ppp in params_to_plot:
+            g = plots.get_single_plotter(width_inch = 3)
+            g.plot_1d( curr_samples, ppp)
+
+
+        clf()
+        g.triangle_plot(curr_samples, params=params_to_plot, 
+                        contour_colors=['black'], 
+                        framealpha = 1., 
+                        filled=True,
+                        )
+        
+        show()        
+        
+
+
+
+
+

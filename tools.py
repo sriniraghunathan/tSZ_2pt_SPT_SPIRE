@@ -21,6 +21,26 @@ def get_covs_for_difference_vectors(binned_el, m1_comb, m2_comb,
     m2_comb: ('ymv', 'ymv') or something like that.
     sim_comp_for_non_gau_errror: "Full" sim array for cov estimation
     """
+
+    def arrange_and_concat_cls(lmin_lmax_arr, cl_1, cl_2):
+        """
+        cl_concat = []
+        for lmin_lmax in lmin_lmax_arr:
+            lmin, lmax = lmin_lmax
+            linds = np.where( (binned_el>=lmin) & (binned_el<lmax) )[0]
+            cl_concat.extend( np.concatenate( (cl_1[linds], cl_2[linds]) ) )
+        """
+        cl_concat1, cl_concat2 = [], []
+        for lmin_lmax in lmin_lmax_arr:
+            lmin, lmax = lmin_lmax
+            linds = np.where( (binned_el>=lmin) & (binned_el<lmax) )[0]
+            cl_concat1.extend( cl_1[linds] )
+            cl_concat2.extend( cl_2[linds] )
+            ##print(cl_concat1)
+            ##print(cl_concat2); sys.exit()
+        cl_concat = np.concatenate( (cl_concat1, cl_concat2) )
+        return cl_concat
+
     cov_dic = {}
     cl_full_arr_for_cov = []
     for simno in sorted( op_ps_1d_dic[sim_comp_for_non_gau_errror] ):
@@ -28,11 +48,8 @@ def get_covs_for_difference_vectors(binned_el, m1_comb, m2_comb,
         el_, cl_1 = op_ps_1d_dic[sim_comp_for_non_gau_errror][simno][0][m1_comb]
         el_, cl_2 = op_ps_1d_dic[sim_comp_for_non_gau_errror][simno][0][m2_comb]
 
-        cl_concat = []
-        for lmin_lmax in lmin_lmax_arr:
-            lmin, lmax = lmin_lmax
-            linds = np.where( (binned_el>=lmin) & (binned_el<lmax) )[0]
-            cl_concat.extend( np.concatenate( (cl_1[linds], cl_2[linds]) ) )
+        cl_concat = arrange_and_concat_cls(lmin_lmax_arr, cl_1, cl_2)
+        ##print(cl_concat); sys.exit()
         cl_full_arr_for_cov.append( cl_concat )
     cl_full_arr_for_cov = np.asarray( cl_full_arr_for_cov )
     cov_dic['stat'] = np.cov(cl_full_arr_for_cov.T)
@@ -44,14 +61,11 @@ def get_covs_for_difference_vectors(binned_el, m1_comb, m2_comb,
         for simno in sorted( op_ps_1d_dic[sys_comp] ):
             el_, cl_1 = op_ps_1d_dic[sys_comp][simno][0][m1_comb]
             el_, cl_2 = op_ps_1d_dic[sys_comp][simno][0][m2_comb]
-
-            cl_concat = []
-            for lmin_lmax in lmin_lmax_arr:
-                lmin, lmax = lmin_lmax
-                linds = np.where( (binned_el>=lmin) & (binned_el<lmax) )[0]
-                cl_concat.extend( np.concatenate( (cl_1[linds], cl_2[linds]) ) )
+            cl_concat = arrange_and_concat_cls(lmin_lmax_arr, cl_1, cl_2)
+            ##print(cl_concat); sys.exit()
             cl_full_arr_for_cov.append( cl_concat )
         cl_full_arr_for_cov = np.asarray( cl_full_arr_for_cov )
+        
         cov_dic[sys_comp] = np.cov(cl_full_arr_for_cov.T)
 
     #CMB systematic with Tcal error and kSZ systematic
@@ -68,11 +82,15 @@ def get_covs_for_difference_vectors(binned_el, m1_comb, m2_comb,
     cl_full_arr_for_cov = []
     for simno in range( total_sims ):
         cl_1, cl_2 = cl_cmb_ilc_res_arr_1[simno], cl_cmb_ilc_res_arr_2[simno]
+        cl_concat = arrange_and_concat_cls(lmin_lmax_arr, cl_1, cl_2)
+        """
         cl_concat = []
         for lmin_lmax in lmin_lmax_arr:
             lmin, lmax = lmin_lmax
             linds = np.where( (binned_el>=lmin) & (binned_el<lmax) )[0]
             cl_concat.extend( np.concatenate( (cl_1[linds], cl_2[linds]) ) )
+        """
+        #print(cl_concat); sys.exit()
         cl_full_arr_for_cov.append( cl_concat )
     cl_full_arr_for_cov = np.asarray( cl_full_arr_for_cov )
     cov_dic['cmb_withspiretcalerror'] = np.cov(cl_full_arr_for_cov.T)
@@ -89,18 +107,26 @@ def get_covs_for_difference_vectors(binned_el, m1_comb, m2_comb,
     cl_full_arr_for_cov = []
     for simno in range( total_sims ):
         cl_1, cl_2 = cl_ksz_ilc_res_arr_1[simno], cl_ksz_ilc_res_arr_2[simno]
+        cl_concat = arrange_and_concat_cls(lmin_lmax_arr, cl_1, cl_2)
+        """
         cl_concat = []
         for lmin_lmax in lmin_lmax_arr:
             lmin, lmax = lmin_lmax
             linds = np.where( (binned_el>=lmin) & (binned_el<lmax) )[0]
             cl_concat.extend( np.concatenate( (cl_1[linds], cl_2[linds]) ) )
+        """
+        #print(cl_concat); sys.exit()
         cl_full_arr_for_cov.append( cl_concat )
     cl_full_arr_for_cov = np.asarray( cl_full_arr_for_cov )
     cov_dic['ksz'] = np.cov(cl_full_arr_for_cov.T)
 
     final_cov = np.zeros_like( cov_dic['stat'] )
     for comp in comp_arr_for_final_cov:
+        ##print(comp, np.mean(cov_dic[comp]))
         final_cov = final_cov + cov_dic[comp]
+        ##print(final_cov); sys.exit()
+
+    #print(final_cov); sys.exit()
 
     return final_cov
 
@@ -452,6 +478,8 @@ def get_likelihood(data, model, cov):
     """
     function to calculate the likelihood given data, model, covariance matrix
     """
+    data = np.asarray( data )
+    model = np.asarray( model )
     cinv = np.linalg.inv(cov)
     residual = data - model
     logLval =  -0.5 * np.asarray( np.dot(residual.T, np.dot( cinv, residual ))).squeeze()
