@@ -222,7 +222,9 @@ def get_covs_for_difference_vectors_v1(binned_el, m1_comb, m2_comb,
 
 def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, wl_dic, m1, m2, sim_tsz_cib_estimate_dic, total_sims_for_tsz_cib = 50, 
     sim_or_data_tsz = 'cibmindata_tsz',
-    reqd_linds = None, ):
+    reqd_linds = None, 
+    cib_scatter_sigma = None,
+    ):
     for tmpsimno in range(total_sims_for_tsz_cib):
 
         """
@@ -237,15 +239,22 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
             sa_arr[tmpsimno][curr_rho_tsz_cib_linds] = sa_arr[tmpsimno][curr_rho_tsz_cib_linds] + curr_tsz_cib_est1[curr_rho_tsz_cib_linds]
             sb_arr[tmpsimno][curr_rho_tsz_cib_linds] = sb_arr[tmpsimno][curr_rho_tsz_cib_linds] + curr_tsz_cib_est2[curr_rho_tsz_cib_linds]
         """
+        if cib_scatter_sigma is not None:
+            curr_tweak_arr = 1. + np.random.standard_normal(len(bands)) * cib_scatter_sigma
+            curr_tweak_arr[-2:] = 1.
+        else:
+            curr_tweak_arr = np.ones( len(bands) )
 
         #read maps and get spectra
         cl_tsz_cib_dic = {}
         cl_tsz_cib_dic['TT'] = {}
-        for band1 in bands:
-            for band2 in bands:
+        for b1cntr, band1 in enumerate( bands ):
+            for b2cntr, band2 in enumerate( bands ):
 
                 binned_el = sim_ps_dic[tmpsimno][(band1, band2)]['binned_el']
                 cl_cib = sim_ps_dic[tmpsimno][(band1, band2)]['cib']
+                curr_cib_tweak = curr_tweak_arr[b1cntr]
+                cl_cib = cl_cib * curr_cib_tweak
 
                 if sim_or_data_tsz == 'sim_tsz':
                     cl_tsz = sim_ps_dic[tmpsimno][(band1, band2)]['tsz']
