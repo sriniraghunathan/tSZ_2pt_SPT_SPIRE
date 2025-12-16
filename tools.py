@@ -1,5 +1,21 @@
 import numpy as np, sys, os
 
+def get_modified_cov(cl11_arr, cl22_arr, operation = 'subtract'):
+
+    total_sims = len(cl11_arr)
+    assert total_sims == len(cl22_arr)
+    cl_arr_for_cov = []
+    for i in range( total_sims ):
+        if operation == 'subtract':
+            curr_cl_for_cov = cl11_arr[i] - cl22_arr[i]
+
+        cl_arr_for_cov.append( curr_cl_for_cov )
+
+    cl_arr_for_cov = np.asarray( cl_arr_for_cov )
+    cov = np.cov(cl_arr_for_cov.T)
+    
+    return cov
+
 def get_covs_for_difference_vectors(binned_el, m1_comb, m2_comb, 
             op_ps_1d_dic, 
             sim_comp_for_non_gau_errror = 'cmb_tsz_ksz_noise_uncorrcib_uncorrrad', 
@@ -241,7 +257,7 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
         """
         if cib_scatter_sigma is not None:
             curr_tweak_arr = 1. + np.random.standard_normal(len(bands)) * cib_scatter_sigma
-            curr_tweak_arr[-2:] = 1.
+            ###curr_tweak_arr[-2:] = 1.
         else:
             curr_tweak_arr = np.ones( len(bands) )
 
