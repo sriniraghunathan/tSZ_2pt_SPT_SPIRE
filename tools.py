@@ -1,6 +1,6 @@
 import numpy as np, sys, os
 
-def get_modified_cov(cl11_arr, cl22_arr, operation = 'subtract'):
+def get_modified_cov(cl11_arr, cl22_arr, operation):
 
     total_sims = len(cl11_arr)
     assert total_sims == len(cl22_arr)
@@ -8,6 +8,13 @@ def get_modified_cov(cl11_arr, cl22_arr, operation = 'subtract'):
     for i in range( total_sims ):
         if operation == 'subtract':
             curr_cl_for_cov = cl11_arr[i] - cl22_arr[i]
+        elif operation == 'divide':
+            curr_cl_for_cov = cl11_arr[i] / cl22_arr[i]
+            #print(cl11_arr[i], cl22_arr[i]); sys.exit()
+        elif operation == 'multiply':
+            curr_cl_for_cov = cl11_arr[i] * cl22_arr[i]
+        elif operation == 'add':
+            curr_cl_for_cov = cl11_arr[i] + cl22_arr[i]
 
         cl_arr_for_cov.append( curr_cl_for_cov )
 
