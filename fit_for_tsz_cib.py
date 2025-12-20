@@ -60,6 +60,7 @@ bands = sim_tsz_cib_estimate_dic['bands']
 ilc_1d_weights_dic = sim_tsz_cib_estimate_dic['ilc_1d_weights_dic']
 #cl_yy_fromcibmindata = sim_tsz_cib_estimate_dic['cl_yy_fromcibmindata']
 tmpiter_key = 'cibmindata_tsz' #'sim_tsz'
+cib_scatter_sigma = None
 
 wl_dic = {}
 for ilc_keyname in ['ymv', 'ycibfree']:
@@ -94,8 +95,8 @@ which_sim = 'cmb_tsz_ksz_noise_uncorrcib_uncorrrad_rc5.1_noslope_spt3gbeams_comp
 
 #lmin_lmax_arr = [(500, 3000)]
 #lmin_lmax_arr = [(500, 1500), (1500, 3000)]
-lmin_lmax_arr = [(500, 1000), (1000, 1500), (1500, 2000), (2000, 2500), (2500, 3000)]
-#lmin_lmax_arr = [(500, 1000), (1000, 1500), (1500, 2000), (2000, 2500), (2500, 3000), (3000, 5000)]
+#lmin_lmax_arr = [(500, 1000), (1000, 1500), (1500, 2000), (2000, 2500), (2500, 3000)]
+lmin_lmax_arr = [(500, 1000), (1000, 1500), (1500, 2000), (2000, 2500), (2500, 3000), (3000, 5000)]
 #lmin_lmax_arr = [(500, 1000), (1000, 1500), (1500, 2000), (2000, 2500), (2500, 3000), (3000, 3500), (3500, 4000), (4000, 4500), (4500, 5000)]
 
 if which_ilc_sets == 'mv-cibfree':
@@ -135,7 +136,7 @@ def get_data_vectors(lmin_lmax_arr):
 
     return np.asarray( data )
 
-def get_model_vectors(lmin_lmax_arr, param_dict_sampler, sim_or_data_tsz = 'cibmindata_tsz'):
+def get_model_vectors(lmin_lmax_arr, param_dict_sampler, sim_or_data_tsz = 'cibmindata_tsz', cib_scatter_sigma = None):
     model = []
     for bincntr, l1l2 in enumerate( lmin_lmax_arr ):
         ##print(l1l2)
@@ -160,6 +161,7 @@ def get_model_vectors(lmin_lmax_arr, param_dict_sampler, sim_or_data_tsz = 'cibm
                                                            total_sims_for_tsz_cib = total_sims_for_tsz_cib, 
                                                            sim_or_data_tsz = sim_or_data_tsz,
                                                            reqd_linds = curr_rho_tsz_cib_linds, 
+                                                           cib_scatter_sigma = cib_scatter_sigma, 
                                                           )
 
         curr_diff_vector_sim_arr = sa_arr - sb_arr
@@ -179,7 +181,7 @@ def get_tsz_cib_corr_likelihood(**param_values):
     for pcntr, ppp in enumerate( param_names ):
         param_dict_sampler[ppp] = param_values[pcntr]
     
-    model = get_model_vectors(lmin_lmax_arr, param_dict_sampler, sim_or_data_tsz = tmpiter_key)
+    model = get_model_vectors(lmin_lmax_arr, param_dict_sampler, sim_or_data_tsz = tmpiter_key, cib_scatter_sigma = cib_scatter_sigma)
     ##print(data.shape, model.shape, curr_diff_cov.shape); sys.exit()
     
 
@@ -218,7 +220,7 @@ for l1l2 in lmin_lmax_arr:
     l1l2_str = '%sto%s' %(l1, l2)
     lmin_lmax_arr_str = '%s-%s' %(lmin_lmax_arr_str, l1l2_str)
 chain_name = 'tszcibcorr_%s_totalbins%s_%s' %(which_ilc_sets, total_bins, lmin_lmax_arr_str)
-chain_fd_and_name = 'results/chains/%s/%s' %(chain_name, chain_name)
+chain_fd_and_name = 'results/chains/%s/cib_scatter_sigma_%s/%s/%s' %(tmpiter_key, cib_scatter_sigma, chain_name, chain_name)
 
 input_info = {}
 input_info["params"] = mcmc_input_params_info_dict

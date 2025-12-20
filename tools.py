@@ -1,4 +1,5 @@
 import numpy as np, sys, os
+from pylab import *
 
 def get_modified_cov(cl11_arr, cl22_arr, operation):
 
@@ -247,7 +248,9 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
     sim_or_data_tsz = 'cibmindata_tsz',
     reqd_linds = None, 
     cib_scatter_sigma = None,
+    rs=111,
     ):
+    if rs != -1: np.random.seed(rs)
     for tmpsimno in range(total_sims_for_tsz_cib):
 
         """
@@ -261,12 +264,12 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
             curr_tsz_cib_est2 = 2*d2_tsz_cib_dic[tmpsimno]/1e6
             sa_arr[tmpsimno][curr_rho_tsz_cib_linds] = sa_arr[tmpsimno][curr_rho_tsz_cib_linds] + curr_tsz_cib_est1[curr_rho_tsz_cib_linds]
             sb_arr[tmpsimno][curr_rho_tsz_cib_linds] = sb_arr[tmpsimno][curr_rho_tsz_cib_linds] + curr_tsz_cib_est2[curr_rho_tsz_cib_linds]
-        """
-        if cib_scatter_sigma is not None:
+        """        
+        if cib_scatter_sigma is not None: #tweak CIB now
             curr_tweak_arr = 1. + np.random.standard_normal(len(bands)) * cib_scatter_sigma
-            ###curr_tweak_arr[-2:] = 1.
+            curr_tweak_arr[-2:] = 1.
         else:
-            curr_tweak_arr = np.ones( len(bands) )
+            curr_tweak_arr = np.ones( len(bands ))
 
         #read maps and get spectra
         cl_tsz_cib_dic = {}
@@ -274,17 +277,20 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
         for b1cntr, band1 in enumerate( bands ):
             for b2cntr, band2 in enumerate( bands ):
 
-                binned_el = sim_ps_dic[tmpsimno][(band1, band2)]['binned_el']
-                cl_cib = sim_ps_dic[tmpsimno][(band1, band2)]['cib']
-                curr_cib_tweak = curr_tweak_arr[b1cntr]
-                cl_cib = cl_cib * curr_cib_tweak
+                ###if band1 != 150 or band2 != 150: continue
+
+                binned_el = sim_ps_dic[tmpsimno][(band1, band1)]['binned_el']
+                cl_cib_ori = sim_ps_dic[tmpsimno][(band1, band1)]['cib']
+                cib_tweak_val_for_ps = np.sqrt( curr_tweak_arr[b1cntr] * curr_tweak_arr[b1cntr] )
+                cl_cib = np.copy( cl_cib_ori ) * cib_tweak_val_for_ps
+                cl_cib_tweak_only = np.copy( cl_cib_ori ) - np.copy( cl_cib )
 
                 if sim_or_data_tsz == 'sim_tsz':
-                    cl_tsz = sim_ps_dic[tmpsimno][(band1, band2)]['tsz']
+                    cl_tsz = sim_ps_dic[tmpsimno][(band2, band2)]['tsz']
 
                 elif sim_or_data_tsz == 'cibmindata_tsz':
-                    curr_tsz_compton_y_fac = sim_tsz_cib_estimate_dic['tsz_compton_y_fac'][band2]
-                    cl_tsz = sim_tsz_cib_estimate_dic['cl_yy_fromcibmindata'] * curr_tsz_compton_y_fac**2. * 1e6
+                    curr_tsz_compton_y_fac = sim_tsz_cib_estimate_dic['tsz_compton_y_fac'][band2] * sim_tsz_cib_estimate_dic['tsz_compton_y_fac'][band2]
+                    cl_tsz = sim_tsz_cib_estimate_dic['cl_yy_fromcibmindata'] * curr_tsz_compton_y_fac * 1e6
 
                 #tszXCIB
                 if rho_tsz_cib is not None:
@@ -293,19 +299,84 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
                     assert sim_or_data_tsz == 'sim_tsz'
                     cl_cib_tsz = sim_ps_dic[tmpsimno][(band1, band2)]['tsz_cib']
 
+                ##print(band1, band2, curr_tsz_compton_y_fac, cl_cib, cl_tsz, cl_cib_tsz); ##sys.exit()
+
                 cl_tsz_cib_dic['TT'][(band1, band2)] = cl_cib_tsz
+            ##sys.exit()
+
+        #CIB/tSZ
+        cl_tsz_dic = {}
+        cl_tsz_dic['TT'] = {}
+        cl_cib_tweaked_dic = {}
+        cl_cib_tweaked_dic['TT'] = {}
+        for b1cntr, band1 in enumerate( bands ):
+            for b2cntr, band2 in enumerate( bands ):
+                cl_cib_ori = sim_ps_dic[tmpsimno][(band1, band2)]['cib']
+                cib_tweak_val_for_ps = np.sqrt( curr_tweak_arr[b1cntr] * curr_tweak_arr[b2cntr] )
+                cl_cib = np.copy( cl_cib_ori ) * cib_tweak_val_for_ps
+                cl_cib_tweak_only = np.copy( cl_cib_ori ) - np.copy( cl_cib )
+
+                if sim_or_data_tsz == 'sim_tsz':
+                    cl_tsz = sim_ps_dic[tmpsimno][(band1, band2)]['tsz']
+
+                elif sim_or_data_tsz == 'cibmindata_tsz':
+                    curr_tsz_compton_y_fac = sim_tsz_cib_estimate_dic['tsz_compton_y_fac'][band1] * sim_tsz_cib_estimate_dic['tsz_compton_y_fac'][band2]
+                    cl_tsz = sim_tsz_cib_estimate_dic['cl_yy_fromcibmindata'] * curr_tsz_compton_y_fac * 1e6
+
+                cl_tsz_dic['TT'][(band1, band2)] = cl_tsz
+                cl_cib_tweaked_dic['TT'][(band1, band2)] = cl_cib_tweak_only
+            ##sys.exit()
+
+        if (0):
+            ax = subplot(111, yscale = 'log')
+            tmpels = array([ 750., 1250., 1750., 2250., 2750., 3250., 3750., 4250., 4750.])
+            tmpdl_fac = tmpels * (tmpels+1)/2/np.pi * 1e6
+            bbb1, bbb2 = 220, 857
+            plot( tmpels, tmpdl_fac * cl_cib_tweaked_dic['TT'][(bbb1, bbb2)])
+            ylim(0.1, 1e10)
+            show()
+            sys.exit()
+
 
         wl11, wl12 = wl_dic[m1[0]], wl_dic[m1[1]]
-        curr_tsz_cib_est1 = get_ilc_residual_using_weights(cl_tsz_cib_dic, wl11, bands, wl2 = wl12, el = binned_el)
         wl21, wl22 = wl_dic[m2[0]], wl_dic[m2[1]]
-        curr_tsz_cib_est2 = get_ilc_residual_using_weights(cl_tsz_cib_dic, wl21, bands, wl2 = wl22, el = binned_el)            
+        ##sys.exit()
 
+        #residual tSZ x CIB
+        curr_tsz_cib_est1 = get_ilc_residual_using_weights(cl_tsz_cib_dic, wl11, bands, wl2 = wl12, el = binned_el)
+        curr_tsz_cib_est2 = get_ilc_residual_using_weights(cl_tsz_cib_dic, wl21, bands, wl2 = wl22, el = binned_el)            
         curr_tsz_cib_est1 = 2*curr_tsz_cib_est1/1e6
         curr_tsz_cib_est2 = 2*curr_tsz_cib_est2/1e6
+
+        #residual CIB due to scatter
+        curr_cib_tweak_est1 = get_ilc_residual_using_weights(cl_cib_tweaked_dic, wl11, bands, wl2 = wl12, el = binned_el)
+        curr_cib_tweak_est2 = get_ilc_residual_using_weights(cl_cib_tweaked_dic, wl21, bands, wl2 = wl22, el = binned_el)
+        curr_cib_tweak_est1 = curr_cib_tweak_est1/1e6
+        curr_cib_tweak_est2 = curr_cib_tweak_est2/1e6
+
+        #tSZ for checking
+        curr_tsz_est1 = get_ilc_residual_using_weights(cl_tsz_dic, wl11, bands, wl2 = wl12, el = binned_el)
+        curr_tsz_est2 = get_ilc_residual_using_weights(cl_tsz_dic, wl21, bands, wl2 = wl22, el = binned_el)
+        curr_tsz_est1 = curr_tsz_est1/1e6
+        curr_tsz_est2 = curr_tsz_est2/1e6
+        
+        if (0):
+            clf()
+            tmpels = array([ 750., 1250., 1750., 2250., 2750., 3250., 3750., 4250., 4750.])
+            tmpdl_fac = tmpels * (tmpels+1)/2/np.pi * 1e12
+            plot(tmpels, tmpdl_fac * curr_tsz_est1)
+            plot(tmpels, tmpdl_fac * curr_tsz_est2)
+            plot(tmpels, tmpdl_fac * curr_cib_tweak_est1)
+            plot(tmpels, tmpdl_fac * curr_cib_tweak_est2)
+            xlim(0., 5000.); #ylim(-2., 2.)
+            show(); sys.exit()
+
+
         if reqd_linds is None:
             reqd_linds = np.arange(len(curr_tsz_cib_est2))
-        sa_arr[tmpsimno][reqd_linds] = sa_arr[tmpsimno][reqd_linds] + curr_tsz_cib_est1[reqd_linds]
-        sb_arr[tmpsimno][reqd_linds] = sb_arr[tmpsimno][reqd_linds] + curr_tsz_cib_est2[reqd_linds]
+        sa_arr[tmpsimno][reqd_linds] = sa_arr[tmpsimno][reqd_linds] + curr_tsz_cib_est1[reqd_linds] + curr_cib_tweak_est1[reqd_linds]
+        sb_arr[tmpsimno][reqd_linds] = sb_arr[tmpsimno][reqd_linds] + curr_tsz_cib_est2[reqd_linds] + curr_cib_tweak_est2[reqd_linds]
+        ###print(tmpsimno, np.mean(sa_arr[tmpsimno]), np.mean(sb_arr[tmpsimno]), np.mean(curr_tsz_cib_est1), np.mean(curr_tsz_cib_est2), curr_tweak_arr); sys.exit()
 
     return sa_arr, sb_arr
 
@@ -320,7 +391,11 @@ def inject_res_tsz_cib(els, ilckeyname, cl_yy, cib_sys_key = 'cib_tweaked_spt_on
 def get_null_test_chi_sq(data, cov):
     cov_inv = np.linalg.inv(cov)
     chi_sq_val = np.dot(data, np.dot(data, cov_inv))
-    #chi_val = np.dot(data, cov_inv)
+    if (0):
+        data_err = np.sqrt( np.diag( cov) )
+        chi_sq_val = np.sum(data**2. / data_err**2.)
+
+    chi_val = np.dot(data, cov_inv)
     data_err = np.sqrt( np.diag( cov) )
     chi_val = data / data_err**2.
     return chi_sq_val, chi_val
