@@ -59,8 +59,8 @@ sim_ps_dic = sim_tsz_cib_estimate_dic['sim_ps_dic']
 bands = sim_tsz_cib_estimate_dic['bands']
 ilc_1d_weights_dic = sim_tsz_cib_estimate_dic['ilc_1d_weights_dic']
 #cl_yy_fromcibmindata = sim_tsz_cib_estimate_dic['cl_yy_fromcibmindata']
-tmpiter_key = 'cibmindata_tsz' #'sim_tsz'
-cib_scatter_sigma = None
+cib_scatter_sigma = float(sys.argv[2]) ##0.2 ##None
+tmpiter_key = sys.argv[3] ###'cibmindata_tsz' #'sim_tsz'
 
 wl_dic = {}
 for ilc_keyname in ['ymv', 'ycibfree']:
