@@ -236,12 +236,14 @@ for binno in range(total_bins):
 if fit_for_cib_cal:
     for bandcntr, bandval in enumerate( bands ):
         paramname = 'cib_cal_%s' %(bandcntr+1)
+        mcmc_input_params_info_dict[paramname] = {}
         for keyname in cib_ref_dict:
             mcmc_input_params_info_dict[paramname][keyname] = cib_ref_dict[keyname]
             if keyname == 'latex':
                 currval = mcmc_input_params_info_dict[paramname][keyname]
                 mcmc_input_params_info_dict[paramname][keyname] = currval.replace('bandcntrval', '%s' %(bandcntr+1))
-                
+    ###print(mcmc_input_params_info_dict); sys.exit()
+
 
 debug_cobaya = False #True ##False ##True
 force_resampling = True
