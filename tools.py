@@ -248,6 +248,12 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
     sim_or_data_tsz = 'cibmindata_tsz',
     reqd_linds = None, 
     cib_scatter_sigma = None,
+    cib_cal_1 = None,
+    cib_cal_2 = None,
+    cib_cal_3 = None,
+    cib_cal_4 = None,
+    cib_cal_5 = None,
+    cib_cal_6 = None,
     rs=111,
     ):
     if rs != -1: np.random.seed(rs)
@@ -264,10 +270,17 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
             curr_tsz_cib_est2 = 2*d2_tsz_cib_dic[tmpsimno]/1e6
             sa_arr[tmpsimno][curr_rho_tsz_cib_linds] = sa_arr[tmpsimno][curr_rho_tsz_cib_linds] + curr_tsz_cib_est1[curr_rho_tsz_cib_linds]
             sb_arr[tmpsimno][curr_rho_tsz_cib_linds] = sb_arr[tmpsimno][curr_rho_tsz_cib_linds] + curr_tsz_cib_est2[curr_rho_tsz_cib_linds]
-        """        
+        """
         if cib_scatter_sigma is not None: #tweak CIB now
             curr_tweak_arr = 1. + np.random.standard_normal(len(bands)) * cib_scatter_sigma
             curr_tweak_arr[-2:] = 1.
+        elif cib_cal_1 is not None:
+            assert cib_cal_2 is not None
+            assert cib_cal_3 is not None
+            assert cib_cal_4 is not None
+            assert cib_cal_5 is not None
+            assert cib_cal_6 is not None
+            curr_tweak_arr = [cib_cal_1, cib_cal_2, cib_cal_3, cib_cal_4, cib_cal_5, cib_cal_6]
         else:
             curr_tweak_arr = np.ones( len(bands ))
 

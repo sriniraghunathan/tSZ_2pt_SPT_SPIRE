@@ -60,7 +60,12 @@ bands = sim_tsz_cib_estimate_dic['bands']
 ilc_1d_weights_dic = sim_tsz_cib_estimate_dic['ilc_1d_weights_dic']
 #cl_yy_fromcibmindata = sim_tsz_cib_estimate_dic['cl_yy_fromcibmindata']
 cib_scatter_sigma = float(sys.argv[2]) ##0.2 ##None
+if cib_scatter_sigma == -1:
+    cib_scatter_sigma = None
 tmpiter_key = sys.argv[3] ###'cibmindata_tsz' #'sim_tsz'
+fit_for_cib_cal = int(sys.argv[4])
+if fit_for_cib_cal:
+    assert cib_scatter_sigma is None
 
 wl_dic = {}
 for ilc_keyname in ['ymv', 'ycibfree']:
@@ -144,6 +149,12 @@ def get_model_vectors(lmin_lmax_arr, param_dict_sampler, sim_or_data_tsz = 'cibm
         if param_dict_sampler is not None:
             ppp_name = 'rho_tsz_cib_%s' %(bincntr+1)
             curr_rho_tsz_cib = param_dict_sampler[ppp_name]
+            cib_cal_1 = param_dict_sampler['cib_cal_1']
+            cib_cal_2 = param_dict_sampler['cib_cal_2']
+            cib_cal_3 = param_dict_sampler['cib_cal_3']
+            cib_cal_4 = param_dict_sampler['cib_cal_4']
+            cib_cal_5 = param_dict_sampler['cib_cal_5']
+            cib_cal_6 = param_dict_sampler['cib_cal_6']
         else:
             curr_rho_tsz_cib = None
 
@@ -162,6 +173,12 @@ def get_model_vectors(lmin_lmax_arr, param_dict_sampler, sim_or_data_tsz = 'cibm
                                                            sim_or_data_tsz = sim_or_data_tsz,
                                                            reqd_linds = curr_rho_tsz_cib_linds, 
                                                            cib_scatter_sigma = cib_scatter_sigma, 
+                                                           cib_cal_1 = cib_cal_1,
+                                                           cib_cal_2 = cib_cal_2,
+                                                           cib_cal_3 = cib_cal_3,
+                                                           cib_cal_4 = cib_cal_4,
+                                                           cib_cal_5 = cib_cal_5,
+                                                           cib_cal_6 = cib_cal_6,
                                                           )
 
         curr_diff_vector_sim_arr = sa_arr - sb_arr
@@ -198,6 +215,14 @@ rho_tsz_cib_ref_dict = {
                 "drop": False, 
                 "latex": r"\rho_{\rm tSZxCIB_binval}", 
                 }
+if fit_for_cib_cal:
+    cib_ref_dict = {
+                    "prior": {"min": 0.7, "max": 1.3},
+                    "ref": {"dist": "norm", "loc": 1., "scale": 0.3},
+                    "proposal": 0.2,
+                    "drop": False, 
+                    "latex": r"CIB^{\rm Cal_{bandcntrval}}", 
+                    }
 
 mcmc_input_params_info_dict = {}
 for binno in range(total_bins):
@@ -208,6 +233,14 @@ for binno in range(total_bins):
         if keyname == 'latex':
             currval = mcmc_input_params_info_dict[paramname][keyname]
             mcmc_input_params_info_dict[paramname][keyname] = currval.replace('binval', '%s' %(binno+1))
+if fit_for_cib_cal:
+    for bandcntr, bandval in enumerate( bands ):
+        paramname = 'cib_cal_%s' %(binno+1)
+        for keyname in cib_ref_dict:
+            mcmc_input_params_info_dict[paramname][keyname] = cib_ref_dict[keyname]
+            if keyname == 'latex':
+                currval = mcmc_input_params_info_dict[paramname][keyname]
+                mcmc_input_params_info_dict[paramname][keyname] = currval.replace('bandcntrval', '%s' %(bandcntr+1))
 
 
 debug_cobaya = False #True ##False ##True
@@ -220,7 +253,10 @@ for l1l2 in lmin_lmax_arr:
     l1l2_str = '%sto%s' %(l1, l2)
     lmin_lmax_arr_str = '%s-%s' %(lmin_lmax_arr_str, l1l2_str)
 chain_name = 'tszcibcorr_%s_totalbins%s_%s' %(which_ilc_sets, total_bins, lmin_lmax_arr_str)
-chain_fd_and_name = 'results/chains/%s/cib_scatter_sigma_%s/%s/%s' %(tmpiter_key, cib_scatter_sigma, chain_name, chain_name)
+if fit_for_cib_cal:
+    chain_fd_and_name = 'results/chains/%s/fit_for_cib_cal/%s/%s' %(tmpiter_key, chain_name, chain_name)
+else:
+    chain_fd_and_name = 'results/chains/%s/cib_scatter_sigma_%s/%s/%s' %(tmpiter_key, cib_scatter_sigma, chain_name, chain_name)
 
 input_info = {}
 input_info["params"] = mcmc_input_params_info_dict
