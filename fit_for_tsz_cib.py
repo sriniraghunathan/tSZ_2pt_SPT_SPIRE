@@ -324,7 +324,7 @@ if fit_for_cib_cal:
 else:
     op_fd = '%s/cib_scatter_sigma_%s/' %(op_fd, cib_scatter_sigma)
 
-chain_fd_and_name = '%s/%s/%s/' %(op_fd, chain_name, chain_name)
+chain_fd_and_name = '%s/%s/%s' %(op_fd, chain_name, chain_name)
 
 input_info = {}
 input_info["params"] = mcmc_input_params_info_dict
