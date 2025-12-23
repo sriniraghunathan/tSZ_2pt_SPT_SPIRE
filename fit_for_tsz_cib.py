@@ -20,13 +20,48 @@ import warnings, logging
 warnings.filterwarnings("ignore")
 logging.getLogger().setLevel(logging.ERROR)
 
+import argparse
+
 
 from pylab import *
 import tools
 
 from scipy.stats import chi2
 
+"""
 which_ilc_sets = sys.argv[1]
+cib_scatter_sigma = float(sys.argv[2]) ##0.2 ##None
+if cib_scatter_sigma == -1:
+    cib_scatter_sigma = None
+tmpiter_key = sys.argv[3] ###'cibmindata_tsz' #'sim_tsz'
+fit_for_cib_cal = int(sys.argv[4])
+if fit_for_cib_cal:
+    assert cib_scatter_sigma is None
+#debug_cobaya = False #True ##False ##True
+#force_resampling = True
+"""
+
+parser.add_argument('-which_ilc_sets', dest='which_ilc_sets', action='store', help='which_ilc_sets', type = str)
+parser.add_argument('-cib_scatter_sigma', dest='cib_scatter_sigma', action='store', help='cib_scatter_sigma', type = float, default = None)
+parser.add_argument('-tmpiter_key', dest='tmpiter_key', action='store', help='tmpiter_key', type = str, default = 'cibmindata_tsz')
+parser.add_argument('-fit_for_cib_cal', dest='fit_for_cib_cal', action='store', help='fit_for_cib_cal', type = int, default = 0)
+parser.add_argument('-debug_cobaya', dest='debug_cobaya', action='store', help='debug_cobaya', type = int, default = 0)
+parser.add_argument('-force_resampling', dest='force_resampling', action='store', help='force_resampling', type = int, default = 1)
+
+
+args = parser.parse_args()
+args_keys = args.__dict__
+for kargs in args_keys:
+    param_value = args_keys[kargs]
+    if isinstance(param_value, str):
+        cmd = '%s = "%s"' %(kargs, param_value)
+    else:
+        cmd = '%s = %s' %(kargs, param_value)
+    exec(cmd)
+
+if cib_scatter_sigma == -1 or cib_scatter_sigma == 'None':
+    cib_scatter_sigma = None
+
 assert which_ilc_sets in ['mv-cibfree', 'mv-mvcrosscibfree', 'cibfree-mvcrosscibfree']
 totthreads = 10
 os.putenv('OMP_NUM_THREADS',str(totthreads))
@@ -59,13 +94,6 @@ sim_ps_dic = sim_tsz_cib_estimate_dic['sim_ps_dic']
 bands = sim_tsz_cib_estimate_dic['bands']
 ilc_1d_weights_dic = sim_tsz_cib_estimate_dic['ilc_1d_weights_dic']
 #cl_yy_fromcibmindata = sim_tsz_cib_estimate_dic['cl_yy_fromcibmindata']
-cib_scatter_sigma = float(sys.argv[2]) ##0.2 ##None
-if cib_scatter_sigma == -1:
-    cib_scatter_sigma = None
-tmpiter_key = sys.argv[3] ###'cibmindata_tsz' #'sim_tsz'
-fit_for_cib_cal = int(sys.argv[4])
-if fit_for_cib_cal:
-    assert cib_scatter_sigma is None
 
 wl_dic = {}
 for ilc_keyname in ['ymv', 'ycibfree']:
@@ -245,8 +273,8 @@ if fit_for_cib_cal:
     ###print(mcmc_input_params_info_dict); sys.exit()
 
 
-debug_cobaya = False #True ##False ##True
-force_resampling = True
+#debug_cobaya = False #True ##False ##True
+#force_resampling = True
 GRstat = 0.01
 #chain_name = 'tsz_cib_corr_samples_%sbins' %(total_bins)
 lmin_lmax_arr_str = 'lbins'
