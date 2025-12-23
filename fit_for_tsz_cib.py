@@ -237,7 +237,7 @@ def get_model_vectors(lmin_lmax_arr, param_dict_sampler, sim_or_data_tsz = 'cibm
         uncorr_cib_in_sa = param_dict_sampler['uncorr_cib_frac_a'] * res_cib_a_arr
         uncorr_cib_in_sb = param_dict_sampler['uncorr_cib_frac_b'] * res_cib_b_arr
 
-        curr_diff_vector_sim_arr_uncorrcib = uncorr_cib_in_sa - uncorr_cib_in_sbs
+        curr_diff_vector_sim_arr_uncorrcib = uncorr_cib_in_sa - uncorr_cib_in_sb
         curr_diff_vector_sim_arr_uncorrcib = curr_diff_vector_sim_arr_uncorrcib[25:]
 
         model_uncorrcib = np.mean( curr_diff_vector_sim_arr_uncorrcib, axis = 0)
