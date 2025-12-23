@@ -48,7 +48,7 @@ parser.add_argument('-tmpiter_key', dest='tmpiter_key', action='store', help='tm
 parser.add_argument('-fit_for_cib_cal', dest='fit_for_cib_cal', action='store', help='fit_for_cib_cal', type = int, default = 0)
 parser.add_argument('-debug_cobaya', dest='debug_cobaya', action='store', help='debug_cobaya', type = int, default = 0)
 parser.add_argument('-force_resampling', dest='force_resampling', action='store', help='force_resampling', type = int, default = 1)
-parser.add_argument('-fit_for_uncorr_cib', dest='fit_for_uncorr_cib', action='store', help='fit_for_uncorr_cib', type = int, default = 1)
+#parser.add_argument('-fit_for_uncorr_cib', dest='fit_for_uncorr_cib', action='store', help='fit_for_uncorr_cib', type = int, default = 1)
 
 
 args = parser.parse_args()
@@ -193,12 +193,14 @@ def get_model_vectors(lmin_lmax_arr, param_dict_sampler, sim_or_data_tsz = 'cibm
                 cib_cal_4 = None
                 cib_cal_5 = None
                 cib_cal_6 = None
+            """
             if fit_for_uncorr_cib:
                 uncorr_cib_frac_a = param_dict_sampler['uncorr_cib_frac_a']
                 uncorr_cib_frac_b = param_dict_sampler['uncorr_cib_frac_b']
             else:
                 uncorr_cib_frac_a = None
                 uncorr_cib_frac_b = None
+            """
         else:
             curr_rho_tsz_cib = None
 
@@ -223,8 +225,8 @@ def get_model_vectors(lmin_lmax_arr, param_dict_sampler, sim_or_data_tsz = 'cibm
                                                            cib_cal_4 = cib_cal_4,
                                                            cib_cal_5 = cib_cal_5,
                                                            cib_cal_6 = cib_cal_6,
-                                                           uncorr_cib_frac_a = uncorr_cib_frac_a, 
-                                                           uncorr_cib_frac_b = uncorr_cib_frac_b,
+                                                           # uncorr_cib_frac_a = uncorr_cib_frac_a, 
+                                                           # uncorr_cib_frac_b = uncorr_cib_frac_b,
                                                           )
 
         curr_diff_vector_sim_arr = sa_arr - sb_arr
@@ -289,6 +291,7 @@ if fit_for_cib_cal:
                 currval = mcmc_input_params_info_dict[paramname][keyname]
                 mcmc_input_params_info_dict[paramname][keyname] = currval.replace('bandcntrval', '%s' %(bandcntr+1))
     ###print(mcmc_input_params_info_dict); sys.exit()
+"""
 if fit_for_uncorr_cib:
     mcmc_input_params_info_dict['uncorr_cib_frac_a'] = {
                     "prior": {"min": -2, "max": 2.},
@@ -304,7 +307,7 @@ if fit_for_uncorr_cib:
                     "drop": False, 
                     "latex": r"CIB_{\rm uncorr}}", 
                     }
-
+"""
 
 #debug_cobaya = False #True ##False ##True
 #force_resampling = True
@@ -317,8 +320,10 @@ for l1l2 in lmin_lmax_arr:
     lmin_lmax_arr_str = '%s-%s' %(lmin_lmax_arr_str, l1l2_str)
 chain_name = 'tszcibcorr_%s_totalbins%s_%s' %(which_ilc_sets, total_bins, lmin_lmax_arr_str)
 op_fd = 'results/chains/%s/' %(tmpiter_key)
+"""
 if fit_for_uncorr_cib:
     op_fd = '%s/fit_for_uncorr_cib/' %(op_fd)
+"""
 if fit_for_cib_cal:
     op_fd = '%s/fit_for_cib_cal/' %(op_fd)
 else:

@@ -254,8 +254,8 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
     cib_cal_4 = None,
     cib_cal_5 = None,
     cib_cal_6 = None,
-    uncorr_cib_frac_a = None,
-    uncorr_cib_frac_b = None,
+    # uncorr_cib_frac_a = None,
+    # uncorr_cib_frac_b = None,
     rs=111,
     ):
     if rs != -1: np.random.seed(rs)
@@ -371,6 +371,7 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
         curr_cib_est2 = get_ilc_residual_using_weights(cl_cib_dic, wl21, bands, wl2 = wl22, el = binned_el)
         curr_cib_est1 = curr_cib_est1/1e6
         curr_cib_est2 = curr_cib_est2/1e6
+        """
         if uncorr_cib_frac_a is not None:
             assert uncorr_cib_frac_b is not None
             uncorr_cib_in_sa = uncorr_cib_frac_a * curr_cib_est1
@@ -378,6 +379,7 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
         else:
             uncorr_cib_in_sa = np.zeros( len(curr_cib_est1) )
             uncorr_cib_in_sb = np.zeros( len(curr_cib_est2) )
+        """
 
         #residual CIB due to scatter
         curr_cib_tweak_est1 = get_ilc_residual_using_weights(cl_cib_tweaked_dic, wl11, bands, wl2 = wl12, el = binned_el)
