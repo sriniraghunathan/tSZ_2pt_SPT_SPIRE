@@ -234,8 +234,8 @@ def get_model_vectors(lmin_lmax_arr, param_dict_sampler, sim_or_data_tsz = 'cibm
                 uncorr_cib_in_sa = uncorr_cib_frac_a * res_cib_a_arr
                 uncorr_cib_in_sb = uncorr_cib_frac_b * res_cib_b_arr
             else:
-                uncorr_cib_in_sa = np.zeros( len(curr_cib_est1) )
-                uncorr_cib_in_sb = np.zeros( len(curr_cib_est2) )
+                uncorr_cib_in_sa = np.zeros( len(res_cib_a_arr) )
+                uncorr_cib_in_sb = np.zeros( len(res_cib_a_arr) )
 
             ###print(sa_arr.shape, uncorr_cib_in_sa.shape); sys.exit()
 
