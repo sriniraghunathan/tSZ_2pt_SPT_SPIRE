@@ -194,12 +194,6 @@ def get_model_vectors(lmin_lmax_arr, param_dict_sampler, sim_or_data_tsz = 'cibm
                 cib_cal_4 = None
                 cib_cal_5 = None
                 cib_cal_6 = None
-            if fit_for_uncorr_cib:
-                uncorr_cib_frac_a = param_dict_sampler['uncorr_cib_frac_a']
-                uncorr_cib_frac_b = param_dict_sampler['uncorr_cib_frac_b']
-            else:
-                uncorr_cib_frac_a = None
-                uncorr_cib_frac_b = None
         else:
             curr_rho_tsz_cib = None
 
@@ -229,20 +223,6 @@ def get_model_vectors(lmin_lmax_arr, param_dict_sampler, sim_or_data_tsz = 'cibm
                                                            # uncorr_cib_frac_b = uncorr_cib_frac_b,
                                                           )
     
-        if (1): #20251223 - Uncorrelated CIB piece.
-            if uncorr_cib_frac_a is not None:
-                assert uncorr_cib_frac_b is not None
-                uncorr_cib_in_sa = uncorr_cib_frac_a * res_cib_a_arr
-                uncorr_cib_in_sb = uncorr_cib_frac_b * res_cib_b_arr
-            else:
-                uncorr_cib_in_sa = np.zeros( res_cib_a_arr.shape )
-                uncorr_cib_in_sb = np.zeros( res_cib_a_arr.shape )
-
-            ###print(sa_arr.shape, uncorr_cib_in_sa.shape); sys.exit()
-
-            sa_arr = sa_arr + uncorr_cib_in_sa
-            sb_arr = sb_arr + uncorr_cib_in_sb
-
         curr_diff_vector_sim_arr = sa_arr - sb_arr
         curr_diff_vector_sim_arr = curr_diff_vector_sim_arr[25:]
         ###print(curr_diff_vector_sim_arr.shape); sys.exit()
@@ -250,8 +230,28 @@ def get_model_vectors(lmin_lmax_arr, param_dict_sampler, sim_or_data_tsz = 'cibm
         #fitting
         curr_model = np.mean( curr_diff_vector_sim_arr, axis = 0)[curr_rho_tsz_cib_linds]
         model.extend( curr_model )
-            
-    return np.asarray( model )
+
+    model = np.asarray( model )
+
+    if fit_for_uncorr_cib: #20251223 - Uncorrelated CIB piece.
+        uncorr_cib_in_sa = param_dict_sampler['uncorr_cib_frac_a'] * res_cib_a_arr
+        uncorr_cib_in_sb = param_dict_sampler['uncorr_cib_frac_b'] * res_cib_b_arr
+
+        sa_arr_uncorrcib = tools.get_sim_arrary(res_dic, key_for_sima, which_sim) - undesired_comp_for_sima
+        sb_arr_uncorrcib = tools.get_sim_arrary(res_dic, key_for_simb, which_sim) - undesired_comp_for_simb
+
+        sa_arr_uncorrcib = sa_arr_uncorrcib + uncorr_cib_in_sa
+        sb_arr_uncorrcib = sb_arr_uncorrcib + uncorr_cib_in_sb
+
+        curr_diff_vector_sim_arr_uncorrcib = sa_arr_uncorrcib - sb_arr_uncorrcib
+        curr_diff_vector_sim_arr_uncorrcib = curr_diff_vector_sim_arr_uncorrcib[25:]
+
+        model_uncorrcib = np.mean( curr_diff_vector_sim_arr_uncorrcib, axis = 0)
+
+        model = np.copy( model ) + np.copy( model_uncorrcib )
+
+
+    return model
 
 
 def get_tsz_cib_corr_likelihood(**param_values):
