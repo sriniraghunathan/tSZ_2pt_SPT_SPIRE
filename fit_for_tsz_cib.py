@@ -305,18 +305,18 @@ if fit_for_cib_cal:
     ###print(mcmc_input_params_info_dict); sys.exit()
 if fit_for_uncorr_cib:
     mcmc_input_params_info_dict['uncorr_cib_frac_a'] = {
-                    "prior": {"min": -0.3, "max": 0.3},
-                    "ref": {"dist": "norm", "loc": 0., "scale": 0.3},
+                    "prior": {"min": -1, "max": 1},
+                    "ref": {"dist": "norm", "loc": 0., "scale": 0.2},
                     "proposal": 0.,
                     "drop": False, 
-                    "latex": r"CIB_{\rm uncorr}}", 
+                    "latex": r"CIB_{\rm uncorr_{A}}}", 
                     }
     mcmc_input_params_info_dict['uncorr_cib_frac_b'] = {
-                    "prior": {"min": -0.3, "max": 0.3},
-                    "ref": {"dist": "norm", "loc": 0., "scale": 0.3},
+                    "prior": {"min": -1, "max": 1},
+                    "ref": {"dist": "norm", "loc": 0., "scale": 0.2},
                     "proposal": 0.,
                     "drop": False, 
-                    "latex": r"CIB_{\rm uncorr}}", 
+                    "latex": r"CIB_{\rm uncorr_{B}}}", 
                     }
 
 #debug_cobaya = False #True ##False ##True
