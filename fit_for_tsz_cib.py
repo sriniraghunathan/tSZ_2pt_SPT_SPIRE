@@ -41,6 +41,7 @@ if fit_for_cib_cal:
 #force_resampling = True
 """
 
+parser = argparse.ArgumentParser(description='')
 parser.add_argument('-which_ilc_sets', dest='which_ilc_sets', action='store', help='which_ilc_sets', type = str)
 parser.add_argument('-cib_scatter_sigma', dest='cib_scatter_sigma', action='store', help='cib_scatter_sigma', type = float, default = None)
 parser.add_argument('-tmpiter_key', dest='tmpiter_key', action='store', help='tmpiter_key', type = str, default = 'cibmindata_tsz')
