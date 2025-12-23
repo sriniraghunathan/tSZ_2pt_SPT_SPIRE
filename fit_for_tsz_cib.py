@@ -316,10 +316,8 @@ for l1l2 in lmin_lmax_arr:
     lmin_lmax_arr_str = '%s-%s' %(lmin_lmax_arr_str, l1l2_str)
 chain_name = 'tszcibcorr_%s_totalbins%s_%s' %(which_ilc_sets, total_bins, lmin_lmax_arr_str)
 op_fd = 'results/chains/%s/' %(tmpiter_key)
-"""
 if fit_for_uncorr_cib:
     op_fd = '%s/fit_for_uncorr_cib/' %(op_fd)
-"""
 if fit_for_cib_cal:
     op_fd = '%s/fit_for_cib_cal/' %(op_fd)
 else:
