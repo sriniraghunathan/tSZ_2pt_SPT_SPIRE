@@ -179,13 +179,24 @@ def get_model_vectors(lmin_lmax_arr, param_dict_sampler, sim_or_data_tsz = 'cibm
         if param_dict_sampler is not None:
             ppp_name = 'rho_tsz_cib_%s' %(bincntr+1)
             curr_rho_tsz_cib = param_dict_sampler[ppp_name]
-            cib_cal_1 = param_dict_sampler['cib_cal_1']
-            cib_cal_2 = param_dict_sampler['cib_cal_2']
-            cib_cal_3 = param_dict_sampler['cib_cal_3']
-            cib_cal_4 = param_dict_sampler['cib_cal_4']
-            cib_cal_5 = param_dict_sampler['cib_cal_5']
-            cib_cal_6 = param_dict_sampler['cib_cal_6']
-            uncorr_cib_frac = param_dict_sampler['uncorr_cib_frac']
+            if fit_for_cib_cal:
+                cib_cal_1 = param_dict_sampler['cib_cal_1']
+                cib_cal_2 = param_dict_sampler['cib_cal_2']
+                cib_cal_3 = param_dict_sampler['cib_cal_3']
+                cib_cal_4 = param_dict_sampler['cib_cal_4']
+                cib_cal_5 = param_dict_sampler['cib_cal_5']
+                cib_cal_6 = param_dict_sampler['cib_cal_6']
+            else:
+                cib_cal_1 = None
+                cib_cal_2 = None
+                cib_cal_3 = None
+                cib_cal_4 = None
+                cib_cal_5 = None
+                cib_cal_6 = None
+            if fit_for_uncorr_cib:
+                uncorr_cib_frac = param_dict_sampler['uncorr_cib_frac']
+            else:
+                uncorr_cib_frac = None
         else:
             curr_rho_tsz_cib = None
 
