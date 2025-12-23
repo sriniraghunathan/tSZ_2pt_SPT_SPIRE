@@ -254,6 +254,7 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
     cib_cal_4 = None,
     cib_cal_5 = None,
     cib_cal_6 = None,
+    uncorr_cib_frac = None,
     rs=111,
     ):
     if rs != -1: np.random.seed(rs)
@@ -320,6 +321,8 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
         #CIB/tSZ
         cl_tsz_dic = {}
         cl_tsz_dic['TT'] = {}
+        cl_cib_dic = {}
+        cl_cib_dic['TT'] = {}
         cl_cib_tweaked_dic = {}
         cl_cib_tweaked_dic['TT'] = {}
         for b1cntr, band1 in enumerate( bands ):
@@ -337,6 +340,7 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
                     cl_tsz = sim_tsz_cib_estimate_dic['cl_yy_fromcibmindata'] * curr_tsz_compton_y_fac * 1e6
 
                 cl_tsz_dic['TT'][(band1, band2)] = cl_tsz
+                cl_cib_dic['TT'][(band1, band2)] = np.copy( cl_cib_ori )
                 cl_cib_tweaked_dic['TT'][(band1, band2)] = cl_cib_tweak_only
             ##sys.exit()
 
@@ -360,6 +364,18 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
         curr_tsz_cib_est2 = get_ilc_residual_using_weights(cl_tsz_cib_dic, wl21, bands, wl2 = wl22, el = binned_el)            
         curr_tsz_cib_est1 = 2*curr_tsz_cib_est1/1e6
         curr_tsz_cib_est2 = 2*curr_tsz_cib_est2/1e6
+
+        #residual CIB (uncorrelated piece)
+        curr_cib_est1 = get_ilc_residual_using_weights(cl_cib_dic, wl11, bands, wl2 = wl12, el = binned_el)
+        curr_cib_est2 = get_ilc_residual_using_weights(cl_cib_dic, wl21, bands, wl2 = wl22, el = binned_el)
+        curr_cib_est1 = curr_cib_est1/1e6
+        curr_cib_est2 = curr_cib_est2/1e6
+        if uncorr_cib_frac is not None:
+            uncorr_cib_in_sa = curr_cib_est1
+            uncorr_cib_in_sb = curr_cib_est2
+        else:
+            uncorr_cib_in_sa = np.zeros( len(curr_cib_est1) )
+            uncorr_cib_in_sb = np.zeros( len(curr_cib_est2) )
 
         #residual CIB due to scatter
         curr_cib_tweak_est1 = get_ilc_residual_using_weights(cl_cib_tweaked_dic, wl11, bands, wl2 = wl12, el = binned_el)
@@ -387,8 +403,8 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
 
         if reqd_linds is None:
             reqd_linds = np.arange(len(curr_tsz_cib_est2))
-        sa_arr[tmpsimno][reqd_linds] = sa_arr[tmpsimno][reqd_linds] + curr_tsz_cib_est1[reqd_linds] + curr_cib_tweak_est1[reqd_linds]
-        sb_arr[tmpsimno][reqd_linds] = sb_arr[tmpsimno][reqd_linds] + curr_tsz_cib_est2[reqd_linds] + curr_cib_tweak_est2[reqd_linds]
+        sa_arr[tmpsimno][reqd_linds] = sa_arr[tmpsimno][reqd_linds] + curr_tsz_cib_est1[reqd_linds] + curr_cib_tweak_est1[reqd_linds] + uncorr_cib_in_sa[reqd_linds]
+        sb_arr[tmpsimno][reqd_linds] = sb_arr[tmpsimno][reqd_linds] + curr_tsz_cib_est2[reqd_linds] + curr_cib_tweak_est2[reqd_linds] + uncorr_cib_in_sb[reqd_linds]
         ###print(tmpsimno, np.mean(sa_arr[tmpsimno]), np.mean(sb_arr[tmpsimno]), np.mean(curr_tsz_cib_est1), np.mean(curr_tsz_cib_est2), curr_tweak_arr); sys.exit()
 
     return sa_arr, sb_arr

@@ -184,6 +184,7 @@ def get_model_vectors(lmin_lmax_arr, param_dict_sampler, sim_or_data_tsz = 'cibm
             cib_cal_4 = param_dict_sampler['cib_cal_4']
             cib_cal_5 = param_dict_sampler['cib_cal_5']
             cib_cal_6 = param_dict_sampler['cib_cal_6']
+            uncorr_cib_frac = param_dict_sampler['uncorr_cib_frac']
         else:
             curr_rho_tsz_cib = None
 
@@ -208,6 +209,7 @@ def get_model_vectors(lmin_lmax_arr, param_dict_sampler, sim_or_data_tsz = 'cibm
                                                            cib_cal_4 = cib_cal_4,
                                                            cib_cal_5 = cib_cal_5,
                                                            cib_cal_6 = cib_cal_6,
+                                                           uncorr_cib_frac = uncorr_cib_frac, 
                                                           )
 
         curr_diff_vector_sim_arr = sa_arr - sb_arr
@@ -248,7 +250,7 @@ if fit_for_cib_cal:
     cib_ref_dict = {
                     "prior": {"min": 0.7, "max": 1.3},
                     "ref": {"dist": "norm", "loc": 1., "scale": 0.3},
-                    "proposal": 0.2,
+                    "proposal": 1.,
                     "drop": False, 
                     "latex": r"CIB^{\rm Cal_{bandcntrval}}", 
                     }
@@ -272,6 +274,14 @@ if fit_for_cib_cal:
                 currval = mcmc_input_params_info_dict[paramname][keyname]
                 mcmc_input_params_info_dict[paramname][keyname] = currval.replace('bandcntrval', '%s' %(bandcntr+1))
     ###print(mcmc_input_params_info_dict); sys.exit()
+if include_uncorr_cib:
+    mcmc_input_params_info_dict['uncorr_cib_frac'] = {
+                    "prior": {"min": -2, "max": 2.},
+                    "ref": {"dist": "norm", "loc": 1., "scale": 0.3},
+                    "proposal": 1.,
+                    "drop": False, 
+                    "latex": r"CIB_{\rm uncorr}}", 
+                    }
 
 
 #debug_cobaya = False #True ##False ##True
