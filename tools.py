@@ -407,8 +407,8 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
 
         if reqd_linds is None:
             reqd_linds = np.arange(len(curr_tsz_cib_est2))
-        sa_arr[tmpsimno][reqd_linds] = sa_arr[tmpsimno][reqd_linds] + curr_tsz_cib_est1[reqd_linds] + curr_cib_tweak_est1[reqd_linds] + uncorr_cib_in_sa[reqd_linds]
-        sb_arr[tmpsimno][reqd_linds] = sb_arr[tmpsimno][reqd_linds] + curr_tsz_cib_est2[reqd_linds] + curr_cib_tweak_est2[reqd_linds] + uncorr_cib_in_sb[reqd_linds]
+        sa_arr[tmpsimno][reqd_linds] = sa_arr[tmpsimno][reqd_linds] + curr_tsz_cib_est1[reqd_linds] + curr_cib_tweak_est1[reqd_linds]# + uncorr_cib_in_sa[reqd_linds]
+        sb_arr[tmpsimno][reqd_linds] = sb_arr[tmpsimno][reqd_linds] + curr_tsz_cib_est2[reqd_linds] + curr_cib_tweak_est2[reqd_linds]# + uncorr_cib_in_sb[reqd_linds]
         ###print(tmpsimno, np.mean(sa_arr[tmpsimno]), np.mean(sb_arr[tmpsimno]), np.mean(curr_tsz_cib_est1), np.mean(curr_tsz_cib_est2), curr_tweak_arr); sys.exit()
 
     return sa_arr, sb_arr
