@@ -259,7 +259,7 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
     rs=111,
     ):
     if rs != -1: np.random.seed(rs)
-    res_cib_a_arr, res_cib_b_arr = np.zeros_like( sa_arr ), np.zeros_like( sa_arr )
+    res_cib_a_arr, res_cib_b_arr = np.zeros( sa_arr.shape ), np.zeros( sa_arr.shape )
     for tmpsimno in range(total_sims_for_tsz_cib):
 
         """
@@ -359,7 +359,6 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
 
         wl11, wl12 = wl_dic[m1[0]], wl_dic[m1[1]]
         wl21, wl22 = wl_dic[m2[0]], wl_dic[m2[1]]
-        ##sys.exit()
 
         #residual tSZ x CIB
         curr_tsz_cib_est1 = get_ilc_residual_using_weights(cl_tsz_cib_dic, wl11, bands, wl2 = wl12, el = binned_el)
@@ -390,13 +389,14 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
         curr_cib_tweak_est1 = curr_cib_tweak_est1/1e6
         curr_cib_tweak_est2 = curr_cib_tweak_est2/1e6
 
-        #tSZ for checking
-        curr_tsz_est1 = get_ilc_residual_using_weights(cl_tsz_dic, wl11, bands, wl2 = wl12, el = binned_el)
-        curr_tsz_est2 = get_ilc_residual_using_weights(cl_tsz_dic, wl21, bands, wl2 = wl22, el = binned_el)
-        curr_tsz_est1 = curr_tsz_est1/1e6
-        curr_tsz_est2 = curr_tsz_est2/1e6
-        
         if (0):
+
+            #tSZ for checking
+            curr_tsz_est1 = get_ilc_residual_using_weights(cl_tsz_dic, wl11, bands, wl2 = wl12, el = binned_el)
+            curr_tsz_est2 = get_ilc_residual_using_weights(cl_tsz_dic, wl21, bands, wl2 = wl22, el = binned_el)
+            curr_tsz_est1 = curr_tsz_est1/1e6
+            curr_tsz_est2 = curr_tsz_est2/1e6
+
             clf()
             tmpels = array([ 750., 1250., 1750., 2250., 2750., 3250., 3750., 4250., 4750.])
             tmpdl_fac = tmpels * (tmpels+1)/2/np.pi * 1e12

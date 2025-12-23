@@ -131,8 +131,8 @@ which_sim = 'cmb_tsz_ksz_noise_uncorrcib_uncorrrad_rc5.1_noslope_spt3gbeams_comp
 #lmin_lmax_arr = [(500, 3000)]
 #lmin_lmax_arr = [(500, 1500), (1500, 3000)]
 #lmin_lmax_arr = [(500, 1000), (1000, 1500), (1500, 2000), (2000, 2500), (2500, 3000)]
-#lmin_lmax_arr = [(500, 1000), (1000, 1500), (1500, 2000), (2000, 2500), (2500, 3000), (3000, 5000)]
-lmin_lmax_arr = [(500, 1500), (1500, 3000), (3000, 5000)]
+lmin_lmax_arr = [(500, 1000), (1000, 1500), (1500, 2000), (2000, 2500), (2500, 3000), (3000, 5000)]
+#lmin_lmax_arr = [(500, 1500), (1500, 3000), (3000, 5000)]
 #lmin_lmax_arr = [(500, 1000), (1000, 1500), (1500, 2000), (2000, 2500), (2500, 3000), (3000, 3500), (3500, 4000), (4000, 4500), (4500, 5000)]
 
 if which_ilc_sets == 'mv-cibfree':
@@ -207,6 +207,7 @@ def get_model_vectors(lmin_lmax_arr, param_dict_sampler, sim_or_data_tsz = 'cibm
         
         sa_arr = tools.get_sim_arrary(res_dic, key_for_sima, which_sim) - undesired_comp_for_sima
         sb_arr = tools.get_sim_arrary(res_dic, key_for_simb, which_sim) - undesired_comp_for_simb
+        ##print(sa_arr.shape, sb_arr.shape); sys.exit()
         
         sa_arr, sb_arr, res_cib_a_arr, res_cib_b_arr = tools.account_for_tsz_cib_in_sims(curr_rho_tsz_cib, sa_arr, sb_arr, 
                                                            sim_ps_dic, 
@@ -227,15 +228,15 @@ def get_model_vectors(lmin_lmax_arr, param_dict_sampler, sim_or_data_tsz = 'cibm
                                                            # uncorr_cib_frac_a = uncorr_cib_frac_a, 
                                                            # uncorr_cib_frac_b = uncorr_cib_frac_b,
                                                           )
-
+    
         if (1): #20251223 - Uncorrelated CIB piece.
             if uncorr_cib_frac_a is not None:
                 assert uncorr_cib_frac_b is not None
                 uncorr_cib_in_sa = uncorr_cib_frac_a * res_cib_a_arr
                 uncorr_cib_in_sb = uncorr_cib_frac_b * res_cib_b_arr
             else:
-                uncorr_cib_in_sa = np.zeros( len(res_cib_a_arr) )
-                uncorr_cib_in_sb = np.zeros( len(res_cib_a_arr) )
+                uncorr_cib_in_sa = np.zeros( res_cib_a_arr.shape )
+                uncorr_cib_in_sb = np.zeros( res_cib_a_arr.shape )
 
             ###print(sa_arr.shape, uncorr_cib_in_sa.shape); sys.exit()
 
@@ -244,6 +245,7 @@ def get_model_vectors(lmin_lmax_arr, param_dict_sampler, sim_or_data_tsz = 'cibm
 
         curr_diff_vector_sim_arr = sa_arr - sb_arr
         curr_diff_vector_sim_arr = curr_diff_vector_sim_arr[25:]
+        ###print(curr_diff_vector_sim_arr.shape); sys.exit()
 
         #fitting
         curr_model = np.mean( curr_diff_vector_sim_arr, axis = 0)[curr_rho_tsz_cib_linds]
