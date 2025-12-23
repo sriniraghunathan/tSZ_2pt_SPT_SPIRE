@@ -207,7 +207,7 @@ def get_model_vectors(lmin_lmax_arr, param_dict_sampler, sim_or_data_tsz = 'cibm
         sa_arr = tools.get_sim_arrary(res_dic, key_for_sima, which_sim) - undesired_comp_for_sima
         sb_arr = tools.get_sim_arrary(res_dic, key_for_simb, which_sim) - undesired_comp_for_simb
         
-        sa_arr, sb_arr = tools.account_for_tsz_cib_in_sims(curr_rho_tsz_cib, sa_arr, sb_arr, 
+        sa_arr, sb_arr, res_cib_a_arr, res_cib_b_arr = tools.account_for_tsz_cib_in_sims(curr_rho_tsz_cib, sa_arr, sb_arr, 
                                                            sim_ps_dic, 
                                                            bands, 
                                                            wl_dic, 
@@ -223,9 +223,23 @@ def get_model_vectors(lmin_lmax_arr, param_dict_sampler, sim_or_data_tsz = 'cibm
                                                            cib_cal_4 = cib_cal_4,
                                                            cib_cal_5 = cib_cal_5,
                                                            cib_cal_6 = cib_cal_6,
-                                                           uncorr_cib_frac_a = uncorr_cib_frac_a, 
-                                                           uncorr_cib_frac_b = uncorr_cib_frac_b,
+                                                           # uncorr_cib_frac_a = uncorr_cib_frac_a, 
+                                                           # uncorr_cib_frac_b = uncorr_cib_frac_b,
                                                           )
+
+        if (1): #20251223 - Uncorrelated CIB piece.
+            if uncorr_cib_frac_a is not None:
+                assert uncorr_cib_frac_b is not None
+                uncorr_cib_in_sa = uncorr_cib_frac_a * res_cib_a_arr
+                uncorr_cib_in_sb = uncorr_cib_frac_b * res_cib_b_arr
+            else:
+                uncorr_cib_in_sa = np.zeros( len(curr_cib_est1) )
+                uncorr_cib_in_sb = np.zeros( len(curr_cib_est2) )
+
+            ###print(sa_arr.shape, uncorr_cib_in_sa.shape); sys.exit()
+
+            sa_arr = sa_arr + uncorr_cib_in_sa
+            sb_arr = sb_arr + uncorr_cib_in_sb
 
         curr_diff_vector_sim_arr = sa_arr - sb_arr
         curr_diff_vector_sim_arr = curr_diff_vector_sim_arr[25:]

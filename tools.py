@@ -254,11 +254,12 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
     cib_cal_4 = None,
     cib_cal_5 = None,
     cib_cal_6 = None,
-    uncorr_cib_frac_a = None,
-    uncorr_cib_frac_b = None,
+    # uncorr_cib_frac_a = None,
+    # uncorr_cib_frac_b = None,
     rs=111,
     ):
     if rs != -1: np.random.seed(rs)
+    res_cib_a_arr, res_cib_b_arr = np.zeros_like( sa_arr ), np.zeros_like( sa_arr )
     for tmpsimno in range(total_sims_for_tsz_cib):
 
         """
@@ -371,6 +372,9 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
         curr_cib_est2 = get_ilc_residual_using_weights(cl_cib_dic, wl21, bands, wl2 = wl22, el = binned_el)
         curr_cib_est1 = curr_cib_est1/1e6
         curr_cib_est2 = curr_cib_est2/1e6
+        res_cib_a_arr[tmpsimno] = curr_cib_est1
+        res_cib_b_arr[tmpsimno] = curr_cib_est2
+        """
         if uncorr_cib_frac_a is not None:
             assert uncorr_cib_frac_b is not None
             uncorr_cib_in_sa = uncorr_cib_frac_a * curr_cib_est1
@@ -378,6 +382,7 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
         else:
             uncorr_cib_in_sa = np.zeros( len(curr_cib_est1) )
             uncorr_cib_in_sb = np.zeros( len(curr_cib_est2) )
+        """
 
         #residual CIB due to scatter
         curr_cib_tweak_est1 = get_ilc_residual_using_weights(cl_cib_tweaked_dic, wl11, bands, wl2 = wl12, el = binned_el)
@@ -405,11 +410,11 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
 
         if reqd_linds is None:
             reqd_linds = np.arange(len(curr_tsz_cib_est2))
-        sa_arr[tmpsimno][reqd_linds] = sa_arr[tmpsimno][reqd_linds] + curr_tsz_cib_est1[reqd_linds] + curr_cib_tweak_est1[reqd_linds] + uncorr_cib_in_sa[reqd_linds]
-        sb_arr[tmpsimno][reqd_linds] = sb_arr[tmpsimno][reqd_linds] + curr_tsz_cib_est2[reqd_linds] + curr_cib_tweak_est2[reqd_linds] + uncorr_cib_in_sb[reqd_linds]
+        sa_arr[tmpsimno][reqd_linds] = sa_arr[tmpsimno][reqd_linds] + curr_tsz_cib_est1[reqd_linds] + curr_cib_tweak_est1[reqd_linds]# + uncorr_cib_in_sa[reqd_linds]
+        sb_arr[tmpsimno][reqd_linds] = sb_arr[tmpsimno][reqd_linds] + curr_tsz_cib_est2[reqd_linds] + curr_cib_tweak_est2[reqd_linds]# + uncorr_cib_in_sb[reqd_linds]
         ###print(tmpsimno, np.mean(sa_arr[tmpsimno]), np.mean(sb_arr[tmpsimno]), np.mean(curr_tsz_cib_est1), np.mean(curr_tsz_cib_est2), curr_tweak_arr); sys.exit()
 
-    return sa_arr, sb_arr
+    return sa_arr, sb_arr, res_cib_a_arr, res_cib_b_arr
 
 def inject_res_tsz_cib(els, ilckeyname, cl_yy, cib_sys_key = 'cib_tweaked_spt_only_max_tweak_0.2', rho_tsz_cib = -0.2):
     cl_cib_res_arr = res_dic[ilckeyname]['cl_sys_dic'][cib_sys_key]
