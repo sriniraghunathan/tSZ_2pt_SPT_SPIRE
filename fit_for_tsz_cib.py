@@ -48,6 +48,7 @@ parser.add_argument('-tmpiter_key', dest='tmpiter_key', action='store', help='tm
 parser.add_argument('-fit_for_cib_cal', dest='fit_for_cib_cal', action='store', help='fit_for_cib_cal', type = int, default = 0)
 parser.add_argument('-debug_cobaya', dest='debug_cobaya', action='store', help='debug_cobaya', type = int, default = 0)
 parser.add_argument('-force_resampling', dest='force_resampling', action='store', help='force_resampling', type = int, default = 1)
+parser.add_argument('-fit_for_uncorr_cib', dest='fit_for_uncorr_cib', action='store', help='fit_for_uncorr_cib', type = int, default = 1)
 
 
 args = parser.parse_args()
@@ -274,7 +275,7 @@ if fit_for_cib_cal:
                 currval = mcmc_input_params_info_dict[paramname][keyname]
                 mcmc_input_params_info_dict[paramname][keyname] = currval.replace('bandcntrval', '%s' %(bandcntr+1))
     ###print(mcmc_input_params_info_dict); sys.exit()
-if include_uncorr_cib:
+if fit_for_uncorr_cib:
     mcmc_input_params_info_dict['uncorr_cib_frac'] = {
                     "prior": {"min": -2, "max": 2.},
                     "ref": {"dist": "norm", "loc": 1., "scale": 0.3},
@@ -294,10 +295,15 @@ for l1l2 in lmin_lmax_arr:
     l1l2_str = '%sto%s' %(l1, l2)
     lmin_lmax_arr_str = '%s-%s' %(lmin_lmax_arr_str, l1l2_str)
 chain_name = 'tszcibcorr_%s_totalbins%s_%s' %(which_ilc_sets, total_bins, lmin_lmax_arr_str)
+op_fd = 'results/chains/%s/' %(tmpiter_key)
+if fit_for_uncorr_cib:
+    op_fd = '%s/fit_for_uncorr_cib/' %(op_fd)
 if fit_for_cib_cal:
-    chain_fd_and_name = 'results/chains/%s/fit_for_cib_cal/%s/%s' %(tmpiter_key, chain_name, chain_name)
+    op_fd = '%s/fit_for_cib_cal/' %(op_fd)
 else:
-    chain_fd_and_name = 'results/chains/%s/cib_scatter_sigma_%s/%s/%s' %(tmpiter_key, cib_scatter_sigma, chain_name, chain_name)
+    op_fd = '%s/cib_scatter_sigma_%s/' %(op_fd, cib_scatter_sigma)
+
+chain_fd_and_name = '%s/%s/%s/' %(op_fd, chain_name, chain_name)
 
 input_info = {}
 input_info["params"] = mcmc_input_params_info_dict
