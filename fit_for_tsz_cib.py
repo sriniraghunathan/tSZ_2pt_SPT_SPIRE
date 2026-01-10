@@ -43,12 +43,16 @@ if fit_for_cib_cal:
 
 parser = argparse.ArgumentParser(description='')
 parser.add_argument('-which_ilc_sets', dest='which_ilc_sets', action='store', help='which_ilc_sets', type = str)
-parser.add_argument('-cib_scatter_sigma', dest='cib_scatter_sigma', action='store', help='cib_scatter_sigma', type = float, default = None)
+parser.add_argument('-use_odd_even_combs_only', dest='use_odd_even_combs_only', action='store', help='use_odd_even_combs_only', type = int, default = 1)
 parser.add_argument('-tmpiter_key', dest='tmpiter_key', action='store', help='tmpiter_key', type = str, default = 'cibmindata_tsz')
-parser.add_argument('-fit_for_cib_cal', dest='fit_for_cib_cal', action='store', help='fit_for_cib_cal', type = int, default = 0)
 parser.add_argument('-debug_cobaya', dest='debug_cobaya', action='store', help='debug_cobaya', type = int, default = 0)
 parser.add_argument('-force_resampling', dest='force_resampling', action='store', help='force_resampling', type = int, default = 1)
-parser.add_argument('-fit_for_uncorr_cib', dest='fit_for_uncorr_cib', action='store', help='fit_for_uncorr_cib', type = int, default = 1)
+
+parser.add_argument('-cib_scatter_sigma', dest='cib_scatter_sigma', action='store', help='cib_scatter_sigma', type = float, default = None)
+parser.add_argument('-fit_for_cib_cal', dest='fit_for_cib_cal', action='store', help='fit_for_cib_cal', type = int, default = 0)
+parser.add_argument('-fit_for_uncorr_cib', dest='fit_for_uncorr_cib', action='store', help='fit_for_uncorr_cib', type = int, default = 0)
+parser.add_argument('-include_beam_chromaticity', dest='include_beam_chromaticity', action='store', help='include_beam_chromaticity', type = int, default = 0)
+
 
 
 args = parser.parse_args()
@@ -119,9 +123,14 @@ curr_dl_fac = tmpels * (tmpels+1)/2/np.pi * 1e12
 d1_undesired_comp = res_dic[ilc_keyname1]['sim'][linds]
 d2_undesired_comp = res_dic[ilc_keyname2]['sim'][linds]
 d3_undesired_comp = res_dic[ilc_keyname3]['sim'][linds]
-d1 = res_dic[ilc_keyname1]['data_final'][linds]
-d2 = res_dic[ilc_keyname2]['data_final'][linds]
-d3 = res_dic[ilc_keyname3]['data_final'][linds]
+if use_odd_even_combs_only:
+    d1 = res_dic[ilc_keyname1]['data_final_odd_even_combs_only'][linds]
+    d2 = res_dic[ilc_keyname2]['data_final_odd_even_combs_only'][linds]
+    d3 = res_dic[ilc_keyname3]['data_final_odd_even_combs_only'][linds]
+else:
+    d1 = res_dic[ilc_keyname1]['data_final'][linds]
+    d2 = res_dic[ilc_keyname2]['data_final'][linds]
+    d3 = res_dic[ilc_keyname3]['data_final'][linds]
 reclen = len(d1)
 
 print('\n\n\n')
@@ -213,6 +222,7 @@ def get_model_vectors(lmin_lmax_arr, param_dict_sampler, sim_or_data_tsz = 'cibm
                                                            sim_or_data_tsz = sim_or_data_tsz,
                                                            reqd_linds = curr_rho_tsz_cib_linds, 
                                                            cib_scatter_sigma = cib_scatter_sigma, 
+                                                           include_beam_chromaticity = include_beam_chromaticity,
                                                            cib_cal_1 = cib_cal_1,
                                                            cib_cal_2 = cib_cal_2,
                                                            cib_cal_3 = cib_cal_3,
@@ -333,6 +343,8 @@ if fit_for_cib_cal:
     op_fd = '%s/fit_for_cib_cal/' %(op_fd)
 else:
     op_fd = '%s/cib_scatter_sigma_%s/' %(op_fd, cib_scatter_sigma)
+if include_beam_chromaticity:
+    op_fd = '%s/with_beam_chromaticity/' %(op_fd)
 
 chain_fd_and_name = '%s/%s/%s' %(op_fd, chain_name, chain_name)
 

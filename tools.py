@@ -119,6 +119,7 @@ def get_covs_for_difference_vectors(binned_el, m1_comb, m2_comb,
     cl_full_arr_for_cov = np.asarray( cl_full_arr_for_cov )
     cov_dic['cmb_withspiretcalerror'] = np.cov(cl_full_arr_for_cov.T)
 
+    #kSZ
     if m1_comb in op_ps_1d_dic['ksz_cl_ilc_res_dict']:
         cl_ksz_ilc_res_arr_1 = np.asarray( list( op_ps_1d_dic['ksz_cl_ilc_res_dict'][m1_comb].values() ) ) / 1e12
     else:
@@ -244,6 +245,55 @@ def get_covs_for_difference_vectors_v1(binned_el, m1_comb, m2_comb,
     return final_cov    
 '''
 
+def get_spt3g_rc5p1_noslope_beam(nu, mapparams = None, component = 'cmb', fpath = 'data/beams/rc5.1_noslope/products/componentval/B_ell.npz', lmax = -1, return_ell = False, beam_sigma = 0.):
+
+    component_dic_for_rc5_beams = {'cmb': 'cmb', 'cib': 'cib', 'tsz': 'tsz', 'radio': 'rg', 'rad': 'rg', 'ksz': 'cmb'}
+
+    fpath = fpath.replace('componentval', component_dic_for_rc5_beams[component])
+    if not os.path.exists(fpath):
+        fpath = '/home/sri//analysis/2020_07/ksz_ps/maps/mapmaking/3G/%s' %(fpath)
+
+    bl_dic = np.load( fpath )
+    
+    el, bl = bl_dic['ell'], bl_dic[str(nu)]
+    if lmax > 0:
+        el = el[:lmax]
+        bl = bl[:lmax]
+    
+    if beam_sigma != 0: #20251230
+        fpath_cov = fpath.replace('B_ell', 'cov')
+        bl_cov_dic = np.load(fpath_cov)
+        bl_cov_el = bl_cov_dic['ell']
+        bl_cov_bands = bl_cov_dic['bands'].astype(int)
+        bl_cov = bl_cov_dic['cov'].real
+
+        #extract cov/sigma for the respective band
+        nuind = np.where( bl_cov_bands == nu )[0]
+        cov_len = len( bl_cov_el )
+        start = int( cov_len * nuind )
+        end = start + cov_len
+        bl_cov = bl_cov[start:end, start: end]
+
+        bl_sigma = np.sqrt( np.diag(bl_cov) )
+        bl_sigma = np.interp(el, bl_cov_el, bl_sigma)
+
+        if (0):
+            clf()
+            errorbar(el, bl, yerr = bl_sigma)
+            show(); sys.exit()
+
+        #add sigma to bl now
+        bl = bl + bl_sigma * beam_sigma
+
+
+    if mapparams is not None: #convert to 2D
+        bl = flatsky.cl_to_cl2d(el, bl, mapparams) 
+
+    if return_ell:
+        return el, bl
+    else:
+        return bl
+
 def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, wl_dic, m1, m2, sim_tsz_cib_estimate_dic, total_sims_for_tsz_cib = 50, 
     sim_or_data_tsz = 'cibmindata_tsz',
     reqd_linds = None, 
@@ -257,7 +307,34 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
     # uncorr_cib_frac_a = None,
     # uncorr_cib_frac_b = None,
     rs=111,
+    include_beam_chromaticity = 0,
     ):
+    if include_beam_chromaticity: #20251230 - account for beam chromaticity (i.e:) variation of beams for different SEDs
+        bl_chrom_dic_for_cib, bl_chrom_dic_for_tsz = {}, {}
+        for curr_band in bands:
+            if curr_band in [90, 150, 220]:
+                curr_bl_cmb = get_spt3g_rc5p1_noslope_beam(curr_band, component = 'cmb')
+                curr_bl_cib = get_spt3g_rc5p1_noslope_beam(curr_band, component = 'cib')
+                curr_bl_tsz = get_spt3g_rc5p1_noslope_beam(curr_band, component = 'tsz')
+                curr_bl_chrom_dic_cib = curr_bl_cmb / curr_bl_cib
+                curr_bl_chrom_dic_tsz = curr_bl_cmb / curr_bl_tsz
+            else:
+                curr_bl_chrom_dic_cib = None
+                curr_bl_chrom_dic_tsz = None
+            bl_chrom_dic_for_cib[curr_band] = curr_bl_chrom_dic_cib
+            bl_chrom_dic_for_tsz[curr_band] = curr_bl_chrom_dic_tsz
+        if (0):
+            close('all')
+            clf()
+            color_dic = {90: 'navy', 150: 'darkgreen', 220: 'goldenrod'}
+            for curr_band in bands:
+                if bl_chrom_dic_for_cib[curr_band] is None: continue
+                plot( bl_chrom_dic_for_cib[curr_band], color = color_dic[curr_band])
+                plot( bl_chrom_dic_for_tsz[curr_band], color = color_dic[curr_band], ls = '-.')
+            xlim(0., 10000.); ylim(0.8, 1.2)
+            show(); sys.exit()
+
+
     if rs != -1: np.random.seed(rs)
     res_cib_a_arr, res_cib_b_arr = np.zeros( sa_arr.shape ), np.zeros( sa_arr.shape )
     for tmpsimno in range(total_sims_for_tsz_cib):
@@ -307,6 +384,23 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
                 elif sim_or_data_tsz == 'cibmindata_tsz':
                     curr_tsz_compton_y_fac = sim_tsz_cib_estimate_dic['tsz_compton_y_fac'][band2] * sim_tsz_cib_estimate_dic['tsz_compton_y_fac'][band2]
                     cl_tsz = sim_tsz_cib_estimate_dic['cl_yy_fromcibmindata'] * curr_tsz_compton_y_fac * 1e6
+
+                if include_beam_chromaticity:
+                    curr_bl_chrom_cib, curr_bl_chrom_tsz = bl_chrom_dic_for_cib[band1], bl_chrom_dic_for_tsz[band2]
+                    ##print('hi', band1, band2, curr_bl_chrom_cib, curr_bl_chrom_tsz)
+                    if curr_bl_chrom_cib is not None:
+                        dummy_els = np.arange( len(curr_bl_chrom_cib) )
+                        curr_bl_chrom_cib = np.interp(binned_el, dummy_els, curr_bl_chrom_cib)
+                    else:
+                        curr_bl_chrom_cib = np.ones( len(binned_el) )
+                    if curr_bl_chrom_tsz is not None:
+                        dummy_els = np.arange( len(curr_bl_chrom_tsz) )
+                        curr_bl_chrom_tsz = np.interp(binned_el, dummy_els, curr_bl_chrom_tsz)
+                    else:
+                        curr_bl_chrom_tsz = np.ones( len(binned_el) )
+                    cl_cib = cl_cib / curr_bl_chrom_cib**2.
+                    cl_tsz = cl_tsz / curr_bl_chrom_tsz**2.
+
 
                 #tszXCIB
                 if rho_tsz_cib is not None:
@@ -362,7 +456,7 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
 
         #residual tSZ x CIB
         curr_tsz_cib_est1 = get_ilc_residual_using_weights(cl_tsz_cib_dic, wl11, bands, wl2 = wl12, el = binned_el)
-        curr_tsz_cib_est2 = get_ilc_residual_using_weights(cl_tsz_cib_dic, wl21, bands, wl2 = wl22, el = binned_el)            
+        curr_tsz_cib_est2 = get_ilc_residual_using_weights(cl_tsz_cib_dic, wl21, bands, wl2 = wl22, el = binned_el)
         curr_tsz_cib_est1 = 2*curr_tsz_cib_est1/1e6
         curr_tsz_cib_est2 = 2*curr_tsz_cib_est2/1e6
 
