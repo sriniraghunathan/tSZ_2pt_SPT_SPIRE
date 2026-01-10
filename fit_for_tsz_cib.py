@@ -47,12 +47,12 @@ parser.add_argument('-use_odd_even_combs_only', dest='use_odd_even_combs_only', 
 parser.add_argument('-tmpiter_key', dest='tmpiter_key', action='store', help='tmpiter_key', type = str, default = 'cibmindata_tsz')
 parser.add_argument('-debug_cobaya', dest='debug_cobaya', action='store', help='debug_cobaya', type = int, default = 0)
 parser.add_argument('-force_resampling', dest='force_resampling', action='store', help='force_resampling', type = int, default = 1)
+parser.add_argument('-masked_cib_tsz_ps_estimates', dest='masked_cib_tsz_ps_estimates', action='store', help='masked_cib_tsz_ps_estimates', type = int, default = 0)
 
 parser.add_argument('-cib_scatter_sigma', dest='cib_scatter_sigma', action='store', help='cib_scatter_sigma', type = float, default = None)
 parser.add_argument('-fit_for_cib_cal', dest='fit_for_cib_cal', action='store', help='fit_for_cib_cal', type = int, default = 0)
 parser.add_argument('-fit_for_uncorr_cib', dest='fit_for_uncorr_cib', action='store', help='fit_for_uncorr_cib', type = int, default = 0)
 parser.add_argument('-include_beam_chromaticity', dest='include_beam_chromaticity', action='store', help='include_beam_chromaticity', type = int, default = 0)
-
 
 
 args = parser.parse_args()
@@ -91,7 +91,10 @@ final_full_sys_cov = full_sys_cov_dic['cib_tweaked_spt_only_max_tweak_0.2'] + \
 full_cov = full_stat_cov + final_full_sys_cov
 
 #sim tszxCIB estimates
-sim_tsz_cib_estimate_fname = 'results/power_spectra_lmin500_lmax5000_deltal500/100d_tsz_final_estimate_beamrc5.1_noslope_sim_tszcib_estimates.npy'
+if masked_cib_tsz_ps_estimates:
+    sim_tsz_cib_estimate_fname = 'results/power_spectra_lmin500_lmax5000_deltal500/100d_tsz_final_estimate_beamrc5.1_noslope_sim_tszcib_estimates.npy'
+else:
+    sim_tsz_cib_estimate_fname = 'results/power_spectra_lmin500_lmax5000_deltal500/100d_tsz_final_estimate_beamrc5.1_noslope_sim_tszcib_estimates_nomasking.npy'
 sim_tsz_cib_estimate_dic = np.load( sim_tsz_cib_estimate_fname, allow_pickle=True).item()
 #print(sim_tsz_cib_estimate_dic.keys()); sys.exit()
 
@@ -337,6 +340,8 @@ for l1l2 in lmin_lmax_arr:
     lmin_lmax_arr_str = '%s-%s' %(lmin_lmax_arr_str, l1l2_str)
 chain_name = 'tszcibcorr_%s_totalbins%s_%s' %(which_ilc_sets, total_bins, lmin_lmax_arr_str)
 op_fd = 'results/chains/%s/' %(tmpiter_key)
+if masked_cib_tsz_ps_estimates:
+    op_fd = '%s/masked_cib_tsz_ps_estimates/' %(op_fd)
 if use_odd_even_combs_only:
     op_fd = '%s/odd_even_crosses_only_no_spire_noise_bias/' %(op_fd)
 else:
