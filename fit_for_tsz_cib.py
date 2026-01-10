@@ -339,9 +339,10 @@ for l1l2 in lmin_lmax_arr:
     l1l2_str = '%sto%s' %(l1, l2)
     lmin_lmax_arr_str = '%s-%s' %(lmin_lmax_arr_str, l1l2_str)
 chain_name = 'tszcibcorr_%s_totalbins%s_%s' %(which_ilc_sets, total_bins, lmin_lmax_arr_str)
-op_fd = 'results/chains/%s/' %(tmpiter_key)
+op_fd = 'results/chains/'
 if masked_cib_tsz_ps_estimates:
     op_fd = '%s/masked_cib_tsz_ps_estimates/' %(op_fd)
+op_fd = '%s/%s/' %(op_fd, tmpiter_key)
 if use_odd_even_combs_only:
     op_fd = '%s/odd_even_crosses_only_no_spire_noise_bias/' %(op_fd)
 else:
