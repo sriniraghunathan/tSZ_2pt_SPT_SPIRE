@@ -463,9 +463,9 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
         curr_tsz_cib_est2 = get_ilc_residual_using_weights(cl_tsz_cib_dic, wl21, bands, wl2 = wl22, el = binned_el)
         curr_tsz_cib_est1 = 2*curr_tsz_cib_est1/1e6
         curr_tsz_cib_est2 = 2*curr_tsz_cib_est2/1e6
-        if explicitly_null_tsz_cib_in_cibfree and m1 == 'ycibfree':
+        if explicitly_null_tsz_cib_in_cibfree and m1 == ('ycibfree', 'ycibfree'):
             curr_tsz_cib_est1 = curr_tsz_cib_est1 * 0.
-        if explicitly_null_tsz_cib_in_cibfree and m2 == 'ycibfree':
+        if explicitly_null_tsz_cib_in_cibfree and m2 == ('ycibfree', 'ycibfree'):
             curr_tsz_cib_est2 = curr_tsz_cib_est2 * 0.
 
         #residual CIB (uncorrelated piece)
