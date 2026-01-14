@@ -53,6 +53,7 @@ parser.add_argument('-cib_scatter_sigma', dest='cib_scatter_sigma', action='stor
 parser.add_argument('-fit_for_cib_cal', dest='fit_for_cib_cal', action='store', help='fit_for_cib_cal', type = int, default = 0)
 parser.add_argument('-fit_for_uncorr_cib', dest='fit_for_uncorr_cib', action='store', help='fit_for_uncorr_cib', type = int, default = 0)
 parser.add_argument('-include_beam_chromaticity', dest='include_beam_chromaticity', action='store', help='include_beam_chromaticity', type = int, default = 0)
+parser.add_argument('-explicitly_null_tsz_cib_in_cibfree', dest='explicitly_null_tsz_cib_in_cibfree', action='store', help='explicitly_null_tsz_cib_in_cibfree', type = int, default = 0)
 
 
 args = parser.parse_args()
@@ -234,6 +235,7 @@ def get_model_vectors(lmin_lmax_arr, param_dict_sampler, sim_or_data_tsz = 'cibm
                                                            cib_cal_6 = cib_cal_6,
                                                            # uncorr_cib_frac_a = uncorr_cib_frac_a, 
                                                            # uncorr_cib_frac_b = uncorr_cib_frac_b,
+                                                           explicitly_null_tsz_cib_in_cibfree = explicitly_null_tsz_cib_in_cibfree, 
                                                           )
     
         curr_diff_vector_sim_arr = sa_arr - sb_arr

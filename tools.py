@@ -308,6 +308,10 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
     # uncorr_cib_frac_b = None,
     rs=111,
     include_beam_chromaticity = 0,
+    return_tsz_cib_estimates = False,
+    res_tsz_cib_a_arr = None,
+    res_tsz_cib_b_arr = None,
+    explicitly_null_tsz_cib_in_cibfree = 0,
     ):
     if include_beam_chromaticity: #20251230 - account for beam chromaticity (i.e:) variation of beams for different SEDs
         bl_chrom_dic_for_cib, bl_chrom_dic_for_tsz = {}, {}
@@ -459,6 +463,10 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
         curr_tsz_cib_est2 = get_ilc_residual_using_weights(cl_tsz_cib_dic, wl21, bands, wl2 = wl22, el = binned_el)
         curr_tsz_cib_est1 = 2*curr_tsz_cib_est1/1e6
         curr_tsz_cib_est2 = 2*curr_tsz_cib_est2/1e6
+        if explicitly_null_tsz_cib_in_cibfree and m1 == 'ycibfree':
+            curr_tsz_cib_est1 = curr_tsz_cib_est1 * 0.
+        if explicitly_null_tsz_cib_in_cibfree and m2 == 'ycibfree':
+            curr_tsz_cib_est2 = curr_tsz_cib_est2 * 0.
 
         #residual CIB (uncorrelated piece)
         curr_cib_est1 = get_ilc_residual_using_weights(cl_cib_dic, wl11, bands, wl2 = wl12, el = binned_el)
@@ -507,8 +515,14 @@ def account_for_tsz_cib_in_sims(rho_tsz_cib, sa_arr, sb_arr, sim_ps_dic, bands, 
         sa_arr[tmpsimno][reqd_linds] = sa_arr[tmpsimno][reqd_linds] + curr_tsz_cib_est1[reqd_linds] + curr_cib_tweak_est1[reqd_linds]# + uncorr_cib_in_sa[reqd_linds]
         sb_arr[tmpsimno][reqd_linds] = sb_arr[tmpsimno][reqd_linds] + curr_tsz_cib_est2[reqd_linds] + curr_cib_tweak_est2[reqd_linds]# + uncorr_cib_in_sb[reqd_linds]
         ###print(tmpsimno, np.mean(sa_arr[tmpsimno]), np.mean(sb_arr[tmpsimno]), np.mean(curr_tsz_cib_est1), np.mean(curr_tsz_cib_est2), curr_tweak_arr); sys.exit()
+        if res_tsz_cib_a_arr is not None:
+            res_tsz_cib_a_arr[tmpsimno][reqd_linds] = np.copy(curr_tsz_cib_est1[reqd_linds])/2
+            res_tsz_cib_b_arr[tmpsimno][reqd_linds] = np.copy(curr_tsz_cib_est2[reqd_linds])/2
 
-    return sa_arr, sb_arr, res_cib_a_arr, res_cib_b_arr
+    if res_tsz_cib_a_arr is not None and res_tsz_cib_b_arr is not None:
+        return sa_arr, sb_arr, res_cib_a_arr, res_cib_b_arr, res_tsz_cib_a_arr, res_tsz_cib_b_arr
+    else:
+        return sa_arr, sb_arr, res_cib_a_arr, res_cib_b_arr
 
 def inject_res_tsz_cib(els, ilckeyname, cl_yy, cib_sys_key = 'cib_tweaked_spt_only_max_tweak_0.2', rho_tsz_cib = -0.2):
     cl_cib_res_arr = res_dic[ilckeyname]['cl_sys_dic'][cib_sys_key]
