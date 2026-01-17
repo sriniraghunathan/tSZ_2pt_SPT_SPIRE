@@ -69,6 +69,8 @@ parser.add_argument('-fit_for_uncorr_cib', dest='fit_for_uncorr_cib', action='st
 parser.add_argument('-explicitly_null_tsz_cib_in_cibfree', dest='explicitly_null_tsz_cib_in_cibfree', action='store', help='explicitly_null_tsz_cib_in_cibfree', type = int, default = 0)
 parser.add_argument('-include_beam_chromaticity', dest='include_beam_chromaticity', action='store', help='include_beam_chromaticity', type = int, default = 1)
 
+##parser.add_argument('-default_for_fitting', dest='include_beam_chromaticity', action='store', help='include_beam_chromaticity', type = int, default = 1)
+
 
 args = parser.parse_args()
 args_keys = args.__dict__
@@ -160,9 +162,9 @@ which_sim = 'cmb_tsz_ksz_noise_uncorrcib_uncorrrad_rc5.1_noslope_spt3gbeams_comp
 #lmin_lmax_arr = [(500, 3000)]
 #lmin_lmax_arr = [(500, 1500), (1500, 3000)]
 #lmin_lmax_arr = [(500, 1000), (1000, 1500), (1500, 2000), (2000, 2500), (2500, 3000)]
-lmin_lmax_arr = [(500, 1000), (1000, 1500), (1500, 2000), (2000, 2500), (2500, 3000), (3000, 5000)]
+#lmin_lmax_arr = [(500, 1000), (1000, 1500), (1500, 2000), (2000, 2500), (2500, 3000), (3000, 5000)]
 #lmin_lmax_arr = [(500, 1500), (1500, 3000), (3000, 5000)]
-#lmin_lmax_arr = [(500, 1000), (1000, 1500), (1500, 2000), (2000, 2500), (2500, 3000), (3000, 3500), (3500, 4000), (4000, 4500), (4500, 5000)]
+lmin_lmax_arr = [(500, 1000), (1000, 1500), (1500, 2000), (2000, 2500), (2500, 3000), (3000, 3500), (3500, 4000), (4000, 4500), (4500, 5000)]
 
 if which_ilc_sets == 'mv-cibfree':
     undesired_comp_for_sima, undesired_comp_for_simb = d1_undesired_comp, d2_undesired_comp
