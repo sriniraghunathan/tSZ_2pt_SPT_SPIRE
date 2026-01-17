@@ -86,8 +86,8 @@ if cib_scatter_sigma == -1 or cib_scatter_sigma == 'None':
     cib_scatter_sigma = None
 
 assert which_ilc_sets in ['mv-cibfree', 'mv-mvcrosscibfree', 'cibfree-mvcrosscibfree']
-#totthreads = 10
-#os.putenv('OMP_NUM_THREADS',str(totthreads))
+totthreads = 10
+os.putenv('OMP_NUM_THREADS',str(totthreads))
 
 #fname = 'results/power_spectra_lmin500_lmax7000_deltal250/100d_tsz_final_estimate.npy'
 #fname = 'results/power_spectra_lmin500_lmax7000_deltal250/100d_tsz_final_estimate_beamrc5.1_noslope.npy'
