@@ -49,11 +49,11 @@ parser.add_argument('-debug_cobaya', dest='debug_cobaya', action='store', help='
 parser.add_argument('-force_resampling', dest='force_resampling', action='store', help='force_resampling', type = int, default = 1)
 parser.add_argument('-masked_cib_tsz_ps_estimates', dest='masked_cib_tsz_ps_estimates', action='store', help='masked_cib_tsz_ps_estimates', type = int, default = 0)
 
-parser.add_argument('-cib_scatter_sigma', dest='cib_scatter_sigma', action='store', help='cib_scatter_sigma', type = float, default = None)
-parser.add_argument('-fit_for_cib_cal', dest='fit_for_cib_cal', action='store', help='fit_for_cib_cal', type = int, default = 0)
-parser.add_argument('-fit_for_uncorr_cib', dest='fit_for_uncorr_cib', action='store', help='fit_for_uncorr_cib', type = int, default = 0)
-parser.add_argument('-include_beam_chromaticity', dest='include_beam_chromaticity', action='store', help='include_beam_chromaticity', type = int, default = 0)
-parser.add_argument('-explicitly_null_tsz_cib_in_cibfree', dest='explicitly_null_tsz_cib_in_cibfree', action='store', help='explicitly_null_tsz_cib_in_cibfree', type = int, default = 0)
+# parser.add_argument('-cib_scatter_sigma', dest='cib_scatter_sigma', action='store', help='cib_scatter_sigma', type = float, default = None)
+# parser.add_argument('-fit_for_cib_cal', dest='fit_for_cib_cal', action='store', help='fit_for_cib_cal', type = int, default = 0)
+# parser.add_argument('-fit_for_uncorr_cib', dest='fit_for_uncorr_cib', action='store', help='fit_for_uncorr_cib', type = int, default = 0)
+# parser.add_argument('-explicitly_null_tsz_cib_in_cibfree', dest='explicitly_null_tsz_cib_in_cibfree', action='store', help='explicitly_null_tsz_cib_in_cibfree', type = int, default = 0)
+parser.add_argument('-include_beam_chromaticity', dest='include_beam_chromaticity', action='store', help='include_beam_chromaticity', type = int, default = 1)
 
 
 args = parser.parse_args()
@@ -70,8 +70,8 @@ if cib_scatter_sigma == -1 or cib_scatter_sigma == 'None':
     cib_scatter_sigma = None
 
 assert which_ilc_sets in ['mv-cibfree', 'mv-mvcrosscibfree', 'cibfree-mvcrosscibfree']
-totthreads = 10
-os.putenv('OMP_NUM_THREADS',str(totthreads))
+#totthreads = 10
+#os.putenv('OMP_NUM_THREADS',str(totthreads))
 
 #fname = 'results/power_spectra_lmin500_lmax7000_deltal250/100d_tsz_final_estimate.npy'
 #fname = 'results/power_spectra_lmin500_lmax7000_deltal250/100d_tsz_final_estimate_beamrc5.1_noslope.npy'
