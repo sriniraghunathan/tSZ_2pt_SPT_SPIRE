@@ -1,3 +1,17 @@
+"""
+python fit_for_tsz_cib.py -which_ilc_sets mv-cibfree -include_beam_chromaticity 1
+python fit_for_tsz_cib.py -which_ilc_sets mv-mvcrosscibfree -include_beam_chromaticity 1
+python fit_for_tsz_cib.py -which_ilc_sets cibfree-mvcrosscibfree -include_beam_chromaticity 1
+
+python fit_for_tsz_cib.py -which_ilc_sets mv-cibfree -include_beam_chromaticity 1 -tmpiter_key sim_tsz
+python fit_for_tsz_cib.py -which_ilc_sets mv-mvcrosscibfree -include_beam_chromaticity 1 -tmpiter_key sim_tsz
+python fit_for_tsz_cib.py -which_ilc_sets cibfree-mvcrosscibfree -include_beam_chromaticity 1 -tmpiter_key sim_tsz
+
+python fit_for_tsz_cib.py -which_ilc_sets mv-cibfree -include_beam_chromaticity 0
+python fit_for_tsz_cib.py -which_ilc_sets mv-mvcrosscibfree -include_beam_chromaticity 0
+python fit_for_tsz_cib.py -which_ilc_sets cibfree-mvcrosscibfree -include_beam_chromaticity 0
+
+"""
 #!/usr/bin/env python
 # coding: utf-8
 
