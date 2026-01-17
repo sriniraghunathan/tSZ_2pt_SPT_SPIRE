@@ -87,7 +87,9 @@ tmpels = res_dic[m1m2_arr[0]]['els']
 final_full_sys_cov = full_sys_cov_dic['cib_tweaked_spt_only_max_tweak_0.2'] + \
                 full_sys_cov_dic['rad_tweaked_max_tweak_0.2'] + \
                 full_sys_cov_dic['cmb_withspiretcalerror'] + \
-                full_sys_cov_dic['ksz']
+                full_sys_cov_dic['ksz'] + \
+                full_sys_cov_dic['cmb_tsz_ksz_noise_uncorrcib_uncorrrad_rc5.1_noslope_spt3gbeams_compdependent_tcal_tweaked']
+
             
 full_cov = full_stat_cov + final_full_sys_cov
 
