@@ -4,11 +4,11 @@ python fit_for_tsz_cib.py -which_ilc_sets mv-mvcrosscibfree -include_beam_chroma
 python fit_for_tsz_cib.py -which_ilc_sets cibfree-mvcrosscibfree -include_beam_chromaticity 1
 
 python fit_for_tsz_cib.py -which_ilc_sets mv-cibfree -include_beam_chromaticity 1 -tmpiter_key sim_tsz
-python fit_for_tsz_cib.py -which_ilc_sets mv-mvcrosscibfree -include_beam_chromaticity 1 -tmpiter_key sim_tsz
+##python fit_for_tsz_cib.py -which_ilc_sets mv-mvcrosscibfree -include_beam_chromaticity 1 -tmpiter_key sim_tsz
 python fit_for_tsz_cib.py -which_ilc_sets cibfree-mvcrosscibfree -include_beam_chromaticity 1 -tmpiter_key sim_tsz
 
 python fit_for_tsz_cib.py -which_ilc_sets mv-cibfree -include_beam_chromaticity 0
-python fit_for_tsz_cib.py -which_ilc_sets mv-mvcrosscibfree -include_beam_chromaticity 0
+##python fit_for_tsz_cib.py -which_ilc_sets mv-mvcrosscibfree -include_beam_chromaticity 0
 python fit_for_tsz_cib.py -which_ilc_sets cibfree-mvcrosscibfree -include_beam_chromaticity 0
 
 """
@@ -63,10 +63,10 @@ parser.add_argument('-debug_cobaya', dest='debug_cobaya', action='store', help='
 parser.add_argument('-force_resampling', dest='force_resampling', action='store', help='force_resampling', type = int, default = 1)
 parser.add_argument('-masked_cib_tsz_ps_estimates', dest='masked_cib_tsz_ps_estimates', action='store', help='masked_cib_tsz_ps_estimates', type = int, default = 0)
 
-# parser.add_argument('-cib_scatter_sigma', dest='cib_scatter_sigma', action='store', help='cib_scatter_sigma', type = float, default = None)
-# parser.add_argument('-fit_for_cib_cal', dest='fit_for_cib_cal', action='store', help='fit_for_cib_cal', type = int, default = 0)
-# parser.add_argument('-fit_for_uncorr_cib', dest='fit_for_uncorr_cib', action='store', help='fit_for_uncorr_cib', type = int, default = 0)
-# parser.add_argument('-explicitly_null_tsz_cib_in_cibfree', dest='explicitly_null_tsz_cib_in_cibfree', action='store', help='explicitly_null_tsz_cib_in_cibfree', type = int, default = 0)
+parser.add_argument('-cib_scatter_sigma', dest='cib_scatter_sigma', action='store', help='cib_scatter_sigma', type = float, default = None)
+parser.add_argument('-fit_for_cib_cal', dest='fit_for_cib_cal', action='store', help='fit_for_cib_cal', type = int, default = 0)
+parser.add_argument('-fit_for_uncorr_cib', dest='fit_for_uncorr_cib', action='store', help='fit_for_uncorr_cib', type = int, default = 0)
+parser.add_argument('-explicitly_null_tsz_cib_in_cibfree', dest='explicitly_null_tsz_cib_in_cibfree', action='store', help='explicitly_null_tsz_cib_in_cibfree', type = int, default = 0)
 parser.add_argument('-include_beam_chromaticity', dest='include_beam_chromaticity', action='store', help='include_beam_chromaticity', type = int, default = 1)
 
 
