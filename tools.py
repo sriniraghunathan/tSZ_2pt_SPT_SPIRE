@@ -1,6 +1,155 @@
 import numpy as np, sys, os
 from pylab import *
 
+def get_constraints_table(params_to_plot, sample_arr_to_plot, color_arr = None, rounding_dic = {}):
+    if color_arr is None:
+        color_arr = np.tile(None, len( sample_arr_to_plot) )
+    #get the constraints
+    nx, ny = len(sample_arr_to_plot), len( params_to_plot )
+    constraints_dic = {}
+    constraints_table = np.empty( (nx, ny), dtype = '<U30' )
+    colors_table = np.empty( (nx, ny), dtype = '<U30' )
+    col_labels = []
+    for pind, ppp in enumerate( params_to_plot ):
+        constraints_dic[ppp] = {}
+        for sind, (s, c) in enumerate( zip( sample_arr_to_plot, color_arr) ):
+            ###print( ppp, s.getLatex(ppp) )
+            #tmp = s.getLatex(ppp)
+            tmp = s.getInlineLatex(ppp)#, limit = 1, err_sig_figs = 3)
+            if tmp.find('<')>-1: #increase to 95% C.L>
+                tmp = s.getInlineLatex(ppp, limit = 2)#, err_sig_figs = 3)
+                if tmp.find('--')>-1:
+                    tmp = tmp.replace('---', '-')
+                else:
+                    tmp = r'%s\ ({\rm 95\%% C.L.})' %(tmp)
+            else:
+                if ppp in rounding_dic:
+                    errval = float(tmp.split('pm')[1])
+                    errval_rounded = round(errval, rounding_dic[ppp])
+                    tmp = tmp.replace('%g' %(errval), '%s' %(errval_rounded))
+            param_label, curr_val = strip_getdist_latex_str(tmp)
+            constraints_table[sind, pind] = r'$%s$' %(curr_val)
+            colors_table[sind, pind] = c
+            constraints_dic[ppp][sind] = r'$%s$' %(curr_val)
+        col_labels.append( r'$\sigma(%s)$' %(param_label) )
+    return constraints_dic, constraints_table, colors_table, col_labels
+
+def write_errors_in_diagonal_posteriors(g, params_to_plot, color_arr, constraints_dic, legfsval = 10, legloc = 4, handlelength = 1, handletextpad = 0.3, ncol = 2, frameon = True, labelspacing = 0.3, lwval = 0.7):
+    total_subplots = len( g.subplots )
+
+    if isinstance(legloc, int):
+        legloc_arr = np.tile(legloc, total_subplots)
+    else:
+        legloc_arr = legloc
+
+    for r in range( total_subplots ):
+        for c in range( total_subplots ):
+            if c!=r: continue
+            ax = g.subplots[r,c]
+            ppp = params_to_plot[c]
+            for sampleind in constraints_dic[ppp]:
+                curr_val = constraints_dic[ppp][sampleind]
+                ax.plot([], [], color = color_arr[sampleind], label = curr_val, lw = lwval)
+            
+            handles, labels = ax.get_legend_handles_labels()
+            leg=ax.legend(handles[sampleind+1:], labels[sampleind+1:], loc = legloc_arr[c], fontsize = legfsval, handlelength = handlelength, handletextpad = handletextpad, ncol = ncol, frameon=frameon, labelspacing = labelspacing)
+            leg.get_frame().set_linewidth(0.0)
+            #ax.legend(loc = 4, fontsize = legfsval)
+    return g   
+
+def strip_getdist_latex_str(later_str, what_kind_of_constraint = 'full'):
+    if later_str.find('{')>-1:
+        delimiters_for_stripping = ['$', '^{+', '}_{', '}$' ]
+    else:
+        delimiters_for_stripping = ['$', '\\pm', '$']
+    regex_for_stripping = '|'.join(map(re.escape, delimiters_for_stripping))
+    curr_val_split = re.split(regex_for_stripping, later_str)
+    curr_val_split = [c for c in curr_val_split if c.strip()]
+    param_label = None
+    if what_kind_of_constraint == 'full':
+        if later_str.find('=')>-1:
+            param_label, curr_val = later_str.split('=')
+        elif later_str.find('<')>-1:
+            param_label, curr_val = later_str.split('<')
+            curr_val = '<%s' %(curr_val)
+        elif later_str.find('>')>-1:
+            param_label, curr_val = later_str.split('>')
+            curr_val = '>%s' %(curr_val)
+        #print(param_label, curr_val)
+        curr_val = curr_val.strip()
+    elif what_kind_of_constraint == 'upper_error':
+        curr_val = curr_val_split[1]
+    elif what_kind_of_constraint == 'lower_error':
+        if len(curr_val_split)==2:
+            curr_val = curr_val_split[1]
+        elif len(curr_val_split) == 3:
+            curr_val = curr_val_split[2]
+    elif what_kind_of_constraint == 'best_fit':
+        curr_val = curr_val_split[0]
+
+    if what_kind_of_constraint != 'full':
+        ##print(curr_val_split, curr_val)
+        if curr_val.find('-')>-1:
+            curr_val = float( curr_val.strip('-') ) * -1
+        else:
+            curr_val = float( curr_val )
+    if curr_val in ['--', '---', '_', '-']:
+        curr_val = r'{\rm N/A}'
+
+    return param_label, curr_val
+
+def param_mapping(p):
+    param_map_dic = {'w': 'ws', 
+                    'wa': 'wa', 
+                    'nnu': 'neff', 
+                    }
+    if p in param_map_dic:
+        return param_map_dic[p]
+    else:
+        return p
+
+def mark_axlines(g, params_to_plot, param_dict = None, lwval = 0.5, lsval = '-', alphaval = 0.5, zorderval = 10):
+    total_subplots = len( g.subplots )
+
+    for r in range( total_subplots ):
+        for c in range( total_subplots ):
+            if c>r:continue
+            ax = g.subplots[r,c]
+            ax.tick_params('both', length=2, width=0.5, which='major', direction = 'in')
+            ax.tick_params('both', length=1, width=0.5, which='minor', direction = 'in')
+
+            if total_subplots>1:
+                p1, p2 = param_mapping(params_to_plot[c]), param_mapping(params_to_plot[r])
+            else:
+                p1, p2 = params_to_plot[0]
+                p1, p2 = param_mapping(p1), param_mapping(p2)
+            ##print(p1, p2)
+            if r == c: #diagonal
+                if total_subplots>1:
+                    ax.yaxis.set_visible(False)
+                    if param_dict is not None and p1 in param_dict:
+                        pval = param_dict[p1]
+                        ax.axvline(pval, lw = lwval, ls = lsval, alpha = alphaval, zorder = zorderval); 
+                else:
+                    if param_dict is not None and p1 in param_dict:
+                        p1val = param_dict[p1]
+                        ax.axvline(p1val, lw = lwval, ls = lsval, alpha = alphaval, zorder = zorderval)
+                    if param_dict is not None and p2 in param_dict:
+                        p2val = param_dict[p2]
+                        ax.axhline(p2val, lw = lwval, ls = lsval, alpha = alphaval, zorder = zorderval)
+            else:
+                if param_dict is not None and p1 in param_dict:
+                    p1val = param_dict[p1]
+                    ax.axvline(p1val, lw = lwval, ls = lsval, alpha = alphaval, zorder = zorderval)
+                if param_dict is not None and p2 in param_dict:
+                    p2val = param_dict[p2]
+                    ax.axhline(p2val, lw = lwval, ls = lsval, alpha = alphaval, zorder = zorderval)
+    return g
+
+def get_param_cov_mat_from_getdist(samples, params):
+    cov_mat = samples.cov(params)
+    return cov_mat
+
 def get_modified_cov(cl11_arr, cl22_arr, operation):
 
     total_sims = len(cl11_arr)
