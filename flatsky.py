@@ -121,8 +121,11 @@ def get_beam(flatskymapparams, fwhm_am, lmax):
     import healpy as H
     bl = H.gauss_beam( np.radians(fwhm_am/60.), lmax)
     el = np.arange( len(bl) )
-    bl_2D = cl_to_cl2d(el, bl, flatskymapparams)
-    return bl_2D
+    if flatskymapparams is not None:
+        bl_2D = cl_to_cl2d(el, bl, flatskymapparams)
+        return bl_2D
+    else:
+        return bl
 ################################################################################################################
 def map2cl(flatskymapparams, flatskymap1, flatskymap2 = None, binsize = None, minbin = 0, maxbin = 10000, mask = None, filter_2d = None, return_2d = False):
 
