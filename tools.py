@@ -889,7 +889,7 @@ def get_likelihood(data, model, cov):
     logLval =  -0.5 * np.asarray( np.dot(residual.T, np.dot( cinv, residual ))).squeeze()
     return logLval
     
-def get_binning_operators(ells, ell_bins, ell_weights = None, min_ell = 2, use_dl_for_binning_operators = True, epsilon_for_diag = 1e-8):
+def get_binning_operators(ells, ell_bins, ell_weights = None, min_ell = 2, use_dl_for_binning_operators = True):
     
     #Eqs. (20) and (21) of https://arxiv.org/pdf/astro-ph/0105302.pdf
     total_ells = len(ells)
@@ -899,18 +899,10 @@ def get_binning_operators(ells, ell_bins, ell_weights = None, min_ell = 2, use_d
     pbl = np.zeros( (total_ell_bins, total_ells) ) #N_binned_el x N_ells (Eq. 20 of https://arxiv.org/pdf/astro-ph/0105302.pdf)
     qlb = np.zeros( (total_ells, total_ell_bins) ) #N_ells x N_binned_el (Eq. 21 of https://arxiv.org/pdf/astro-ph/0105302.pdf)
     
-    '''    
-    epsilon_diag_mat_for_pbl = np.eye( total_ell_bins, total_ells  ) * epsilon_for_diag
-    epsilon_diag_mat_for_qlb = np.eye( total_ells, total_ell_bins  ) * epsilon_for_diag
-
-    pbl = pbl + epsilon_diag_mat_for_pbl
-    qlb = qlb + epsilon_diag_mat_for_qlb
-    '''    
-
     for bcntr, (b1, b2) in enumerate(ell_bins):
         ##linds = np.where( (ells>=b1) & (ells<=b2) )[0]
         linds = np.where( (ells>=b1) & (ells<=b2) )[0]
-        b3 = b2+1
+        ###b3 = b2+1
         ##print(ells[linds], b1, b2); sys.exit()
         if len(linds) == 0 or b2<min_ell: continue #make sure \ell >= min_ell.
         if use_dl_for_binning_operators:
@@ -918,9 +910,7 @@ def get_binning_operators(ells, ell_bins, ell_weights = None, min_ell = 2, use_d
         else:
             dl_fac = 1. * ell_weights[linds]
 
-        #pbl[bcntr, linds] = dl_fac * ell_weights[linds] / np.sum(ell_weights[linds]) ##(b2-b1)
-        ##print(dl_fac, linds); sys.exit()
-        pbl[bcntr, linds] = dl_fac / (b3-b1)
+        pbl[bcntr, linds] = dl_fac / len(linds) ##(b3-b1)
         qlb[linds, bcntr] = 1./dl_fac
         ##print(bcntr, b1, b2, b3, len(linds), pbl[bcntr, linds]/dl_fac)#, ells[linds], dl_fac)#, pbl[bcntr])
         ##print(bcntr, b1, b2, ells[linds]); ##sys.exit()
@@ -933,55 +923,65 @@ def get_bpwf(pbl, qlb, mll, bl = None, fl = None):
         kll = np.dot( kll, bl**2.)
     if fl is not None:
         kll = np.dot( kll, fl)
-    ##print(qlb); sys.exit()
+    ###print(qlb); sys.exit()
     kbb = np.dot(pbl, np.dot(kll, qlb))
     ##print(kbb[1]); ##sys.exit()
     kbb_inv = np.linalg.inv(kbb) #inverse of kbb
-    #print(kbb_inv); 
-    ##sys.exit()
+    ###print(kbb_inv); sys.exit()
     bpwf = np.dot(kbb_inv, np.dot(pbl, kll) ) #Eq. (25) of https://arxiv.org/pdf/1707.09353.
 
     return bpwf, kbb, kbb_inv
 
 def get_ell_bin(el_unbinned, delta_el, lmin = None, lmax = None):
-    ##if lmin is None: lmin = min(el_unbinned)
-    ##if lmax is None: lmax = max(el_unbinned)
-    lmin, lmax = 1, max(el_unbinned)
-    el_binned = np.arange(lmin, lmax+delta_el, delta_el)
+    if lmin is None: lmin = min(el_unbinned)
+    if lmax is None: lmax = max(el_unbinned)
+    el_binned = np.arange(lmin+delta_el/2, lmax+delta_el/2, delta_el)
     ell_bins = [(b-delta_el/2, b+delta_el/2) for b in el_binned]
+    
+    ##el_binned = np.arange(lmin, lmax+delta_el, delta_el)
+    ##ell_bins = [(b-delta_el/2, b+delta_el/2) for b in el_binned]
     ##ell_bins = [(b, b+delta_el) for b in el_binned]
     ##print(ell_bins); sys.exit()
     
     return el_binned, ell_bins
 
-def perform_binning(el_unbinned, cl_unbinned, delta_el = 100, return_dl = False, bl = None, fl = None, lmin = 30, lmax = 5000, epsilon_for_diag = 1e-8, debug = False):
+def perform_binning(el_unbinned, cl_unbinned, delta_el = 100, return_dl = False, bl = None, fl = None, lmin = 30, lmax = 5000, debug = False):
     #ell_bins = [(b, b+delta_el) for b in el_binned]
     el_binned, ell_bins = get_ell_bin(el_unbinned, delta_el, lmin = lmin, lmax = lmax)
-    ##print(el_binned.shape, len(ell_bins)); sys.exit()
+    ###print(el_unbinned, el_binned, ell_bins); sys.exit()
 
     reclen_binned = len( el_binned )
     reclen_unbinned = len( el_unbinned )
     ell_weights = np.ones( reclen_unbinned )
-    #ell_weights[el_unbinned<lmin] = epsilon_for_diag
-    #ell_weights[el_unbinned>lmax] = epsilon_for_diag
     pbl, qlb = get_binning_operators(el_unbinned, ell_bins, ell_weights = ell_weights, use_dl_for_binning_operators = return_dl)
     mll = np.diag( np.ones( reclen_unbinned ) )
+    ###print(el_binned.shape)
+    ###print(pbl.shape, pbl)
+    ###print(qlb.shape, qlb); sys.exit()
+    ##print(ell_weights, mll.shape); sys.exit()
 
+    """
     #lmin/lmax cuts
     unbinned_inds_to_cut = np.where( (el_unbinned<lmin) & (el_unbinned>lmax) )
     binned_inds_to_cut = np.where( (el_binned<lmin) & (el_binned>lmax))
     cl_unbinned[(el_unbinned<lmin) | (el_unbinned>lmax)] = 0. #lmin/lmax cut
     
-    epsilon_diag_mat = np.eye( reclen_unbinned )# * epsilon_for_diag
+    epsilon_diag_mat = np.eye( reclen_unbinned )
     mll[(el_unbinned<lmin) | (el_unbinned>lmax)] = 0. #adding a lmin/lmax cut.
-    mll = mll + epsilon_diag_mat
-    #pbl[[el_binned<lmin, None], el_unbinned<lmin] = 0.
-    #qlb[el_unbinned<lmin] = 0.
+    """
 
-    ##from IPython import embed; embed()
     bpwf, kbb, kbb_inv = get_bpwf(pbl, qlb, mll, bl = bl, fl = fl)
 
-    pspec_binned = np.dot(kbb_inv, np.dot(pbl, cl_unbinned) ) #Eq. (26) of https://arxiv.org/pdf/astro-ph/0105302.pdf. Note that there is no noise bias here.
+    thresh = 1e-8
+    #bpwf[bpwf>thresh] = 1/501
+    bpwf[bpwf<thresh] = 0.
+    #print(np.sum(cl_unbinned[:501]))
+    #print(bpwf[0, :502]); sys.exit()
+    pspec_binned = np.dot(bpwf, cl_unbinned) 
+    ###print(pspec_binned); sys.exit()
+
+    ##pspec_binned = np.dot(kbb_inv, np.dot(pbl, cl_unbinned) ) #Eq. (26) of https://arxiv.org/pdf/astro-ph/0105302.pdf. Note that there is no noise bias here.
+    ###print(pspec_binned); sys.exit()
     ##pspec_binned[(el_binned<lmin) | (el_binned>lmax)] = 0. #lmin/lmax cut
     ##print( el_binned, lmin, lmax, pspec_binned ); ##sys.exit()
 
@@ -996,7 +996,7 @@ def perform_binning(el_unbinned, cl_unbinned, delta_el = 100, return_dl = False,
 
         for b in range(len(bpwf)):
             plot( el_unbinned, bpwf[b], color = color_arr[b])
-        show()
+        show(); sys.exit()
 
     ##from IPython import embed; embed();
     
