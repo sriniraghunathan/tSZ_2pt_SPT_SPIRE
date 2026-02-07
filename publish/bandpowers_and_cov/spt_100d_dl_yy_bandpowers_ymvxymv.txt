@@ -1,4 +1,4 @@
-# Estimator: MV $	imes$ MV
+# Estimator: MV x MV
 # 
 # el_eff	 dl_yy[1e12] 	 dl_yy_err[1e12]
 # 
