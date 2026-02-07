@@ -215,10 +215,10 @@ Antarctic Support Contract<br /><br />
 <tr bgcolor="#ffffff"><td valign="top"><p class="text" align="justify">
 
 
-This page provides data products associated with the thermal Sunyaev–Zeldovich (tSZ) power spectrum measurement using observations from the SPTpol/SPT-3G/Herschel-SPIRE surveys over roughly 100 square degrees described in <a href="http://arxiv.org/abs/2501.06890"> Raghunathan et al. 2026</a>.  The tSZ power spectra are presented over the multipole range 500 < ell <= 5000.
+This page provides data products associated with the thermal Sunyaev–Zeldovich (tSZ) power spectrum measurement using observations from the SPTpol/SPT-3G/Herschel-SPIRE surveys over roughly 100 square degrees described in <a href="http://arxiv.org/abs/2501.06890"> Raghunathan et al. 2026</a>.  The tSZ power spectra are presented over the multipole range 500 < &ell; <= 5000.
 
 <br><br>
-If you have any questions regarding this data set or its use, please contact <a href='https://sriniraghunathan.github.io/' target='_blank'>Srinivasan Raghunathan</a> (<a href="mailto:sriniraghuna@gmail.com">sriniraghuna_at_gmail_dot_com</a>). 
+If you have any questions regarding this data set or its use, please contact <a href='https://sriniraghunathan.github.io/' target='_blank'>Srini Raghunathan</a> (<a href="mailto:sriniraghuna@gmail.com">sriniraghuna_at_gmail_dot_com</a>). 
 <br><br>
 Please check this <code>jupyter notebook</code> to help read the maps and the bandpowers:<br>
     <ul>
@@ -261,24 +261,18 @@ Please check this <code>jupyter notebook</code> to help read the maps and the ba
 <tr>
     <td valign="top">
             (Fig. 1 of Raghuanthan et al. 2026.) The above image shows the MV tSZ map reconstruction. The top right inset panel shows the stack of galaxy clusters and the bottom right inset panel shows a zoom-in of one of the locations with multiple galaxy clusters seen as red dots.
+    <br><h3>Compton-y maps and masks:</h3>
+    <ul>
+        <li><a href='maps_and_masks/masks.npy'>maps_and_masks/masks.npy</a>. This contains both the boundary mask and the point source mask. Point source mask is used to mask all sources with flux at 150 GHz <code>S<sub>150</sub> &geq; 2 mJy</code>.<br></li>
+        <li><a href='maps_and_masks/ymv_full_proj0.fits'>maps_and_masks/ymv_full_proj0.fits</a>: This is the MV map from the full dataset.<br></li>
+        <li><a href='maps_and_masks/ymv_half1_proj0.fits'>maps_and_masks/ymv_half1_proj0.fits</a>: MV map from half1.<br></li>
+        <li><a href='maps_and_masks/ymv_half2_proj0.fits'>maps_and_masks/ymv_half2_proj0.fits</a>: MV map from half2.<br></li>
+        <li><a href='maps_and_masks/ycibfree_full_proj0.fits'>maps_and_masks/ycibfree_full_proj0.fits</a>: CIB-min map from the full dataset.<br></li>
+        <li><a href='maps_and_masks/ycibfree_half1_proj0.fits'>maps_and_masks/ycibfree_half1_proj0.fits</a>: CIB-min map from half1.<br></li>
+        <li><a href='maps_and_masks/ycibfree_half2_proj0.fits'>maps_and_masks/ycibfree_half2_proj0.fits</a>: CIB-min map from half2.<br></li>
+    </ul>            
     </td>
 </tr>
-
-<tr>
-    <td valign="top">
-            <br><h3>Compton-y maps and masks:</h3>
-            <ul>
-                <li><a href='maps_and_masks/masks.npy'>maps_and_masks/masks.npy</a>. This contains both the boundary mask and the point source mask. Point source mask is used to mask all sources with flux at 150 GHz <code>S<sub>150</sub> &geq; 2 mJy</code>.<br></li>
-                <li><a href='maps_and_masks/ymv_full_proj0.fits'>maps_and_masks/ymv_full_proj0.fits</a>: This is the MV map from the full dataset.<br></li>
-                <li><a href='maps_and_masks/ymv_half1_proj0.fits'>maps_and_masks/ymv_half1_proj0.fits</a>: MV map from half1.<br></li>
-                <li><a href='maps_and_masks/ymv_half2_proj0.fits'>maps_and_masks/ymv_half2_proj0.fits</a>: MV map from half2.<br></li>
-                <li><a href='maps_and_masks/ycibfree_full_proj0.fits'>maps_and_masks/ycibfree_full_proj0.fits</a>: CIB-min map from the full dataset.<br></li>
-                <li><a href='maps_and_masks/ycibfree_half1_proj0.fits'>maps_and_masks/ycibfree_half1_proj0.fits</a>: CIB-min map from half1.<br></li>
-                <li><a href='maps_and_masks/ycibfree_half2_proj0.fits'>maps_and_masks/ycibfree_half2_proj0.fits</a>: CIB-min map from half2.<br></li>
-            </ul>            
-    </td>
-</tr>
-<tr bgcolor="#ffffff"><td>&nbsp;</td></tr>
 </table>
 
 
@@ -303,32 +297,24 @@ Please check this <code>jupyter notebook</code> to help read the maps and the ba
 </tr>
 <tr>
     <td valign="top">
-            Fig. 4 of Raghuanthan et al. 2026 showing the yy bandpowers from the CIB-min map show as green along with other measurements from ACT/<it>Planck</it>, and SPT as well as the curves from <code>FLAMINGO</code> simulations (dotted: <code>LS8</code> and dashed: <code>LS8+fgas-8&sigma;</code>). In the below files, we release the bandpowers along with the covariance and the bandpower window functions.
+            Fig. 4 of Raghuanthan et al. 2026 showing the yy bandpowers from the CIB-min map show as green along with other measurements from ACT/<it>Planck</it>, and SPT as well as the curves from <code>FLAMINGO</code> simulations (dotted: <code>LS8</code> and dashed: <code>LS8+fgas-8&sigma;</code>). In the below files, we release the bandpowers along with the covariance and the bandpower window function.<br><br>
     </td>
 </tr>
 <tr>
     <td valign="top">
-            <br><h3>Bandpowers window functions:</h3>
+            <h3>Bandpowers window function:</h3>
             <h4>The spectra are binned with uniform weighting in <code>C<sub>&ell;</sub></code>:</h4>
             <code>To bin theory Cl, you can do: cl_theory_binned = np.dot( bpwf, cl_theory_unbinned)</code>
             <ul>
-                <li><a href='bandpowers_and_cov/spt_100d_cl_bpwf.txt'>bandpowers_and_cov/spt_100d_cl_bpwf.txt</a>. Bandpower window functions. This is required to compare theory to the binned spectra. More details are inside the file. Note that none of these have the noise bias in them.<br></li>
+                <li><a href='bandpowers_and_cov/spt_100d_cl_bpwf.txt'>bandpowers_and_cov/spt_100d_cl_bpwf.txt</a>. Bandpower window function. This is required to compare theory to the binned spectra. More details are inside the file. <br></li>
             </ul>            
-    </td>
-</tr>
-<tr>
-    <td valign="top">
-            <br><h3>Bandpowers: Columns are &ell;, <code>D<sub>&ell;</sub>[10<sup>12</sup>]</code>, <code>&delta;D<sub>&ell;</sub>[10<sup>12</sup>]</code> </h3>
+            <h3>Bandpowers: Columns are &ell;, <code>D<sub>&ell;</sub>[10<sup>12</sup>]</code>, <code>&delta;D<sub>&ell;</sub>[10<sup>12</sup>]</code>. <i>Note that none of these have the noise bias.</i></h3>            
             <ul>
                 <li><a href='bandpowers_and_cov/spt_100d_dl_yy_bandpowers_ycibfreexycibfree.txt'>bandpowers_and_cov/spt_100d_dl_yy_bandpowers_ycibfreexycibfree.txt<a>: Auto-power spectrum <code>CIB-min x CIB-min</code><br></li>
                 <li><a href='bandpowers_and_cov/spt_100d_dl_yy_bandpowers_ymvxymv.txt'>bandpowers_and_cov/spt_100d_dl_yy_bandpowers_ymvxymv.txt<a>: Auto-power spectrum <code>MV x MV</code><br></li>
                 <li><a href='bandpowers_and_cov/spt_100d_dl_yy_bandpowers_ycibfreexycibfree.txt'>bandpowers_and_cov/spt_100d_dl_yy_bandpowers_ycibfreexycibfree.txt<a>: Cross-power spectrum <code>MV x CIB-min</code><br></li>                    
             </ul>            
-    </td>
-</tr>
-<tr>
-    <td valign="top">
-            <br><h3>Bandpower covariance matrices:</h3><h4>Sum of both statistical and systematic errros.</h4>
+            <h3>Bandpower covariance matrices: Sum of both statistical and systematic errros.</h3>
             <code>To get the bandpower errors &delta;D<sub>&ell;</sub>[10<sup>12</sup>], you can do: np.sqrt( np.diag( dl_yy_cov ) )</code>
             <ul>
                 <li><a href='bandpowers_and_cov/spt_100d_dl_yy_cov_ycibfreexycibfree.txt'>bandpowers_and_cov/spt_100d_dl_yy_cov_ycibfreexycibfree.txt<a>: Covariance for <code>CIB-min x CIB-min</code><br></li>
@@ -337,17 +323,6 @@ Please check this <code>jupyter notebook</code> to help read the maps and the ba
             </ul>            
     </td>
 </tr>
-</table>
-
-</td></tr>
-<tr bgcolor="#ffffff"><td valign="top">&nbsp;</td></tr>
-
-<tr bgcolor="#ffffff"><td valign="top">
-    <p class="text" align="justify">
-    </p>
-    </td>
-</tr>
-<tr bgcolor="#ffffff"><td>&nbsp;</td></tr>
 </table>
 
 <a name="tSZ x CIB correlation">&nbsp;</a>
