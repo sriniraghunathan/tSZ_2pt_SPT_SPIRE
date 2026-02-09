@@ -31,7 +31,7 @@
 
 ### tSZ $\times$ CIB cross-correlation:
 <p align="center">
-  <img src="plots/rho_tsz_cib.png" width="500" title="tSZ x CIB correlation">
-  <img src="plots/rho_tsz_cib_corner_6bins.png" width="400" title="tSZ x CIB correlation corner plot">
+  <img src="plots/rho_tsz_cib.png" width="40s0" title="tSZ x CIB correlation">
+  <img src="plots/rho_tsz_cib_corner_6bins.png" width="300" title="tSZ x CIB correlation corner plot">
 </p>
 
