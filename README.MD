@@ -30,8 +30,8 @@
 	* Auto-power spectrum of CIB-min and MV maps, as well as the cross-spectrum between CIB-min and MV maps.
 
 ### tSZ $\times$ CIB cross-correlation:
-<p align="center">
-  <img src="plots/rho_tsz_cib.png" width="40s0" title="tSZ x CIB correlation">
+<p align="left">
+  <img src="plots/rho_tsz_cib.png" width="400" title="tSZ x CIB correlation">
   <img src="plots/rho_tsz_cib_corner_6bins.png" width="300" title="tSZ x CIB correlation corner plot">
 </p>
 
