@@ -26,12 +26,16 @@
 	  <img src="plots/ymap_spectra_data_plus_others.png" width="500" title="Compton-$y$ power spectrum">
 </p>
 
-* We also release the associated bandpowers along with the bandpower covariance and the bandpower window functions. These can be found under [bandpowers_and_cov](https://github.com/sriniraghunathan/tSZ_2pt_SPT_SPIRE/tree/main/bandpowers_and_cov) folder. They contain:
-	* Auto-power spectrum of CIB-min and MV maps, as well as the cross-spectrum between CIB-min and MV maps.
+* In [bandpowers_and_cov](https://github.com/sriniraghunathan/tSZ_2pt_SPT_SPIRE/tree/main/bandpowers_and_cov) folder, you can find the associated bandpowers along with the bandpower covariance matrix and the bandpower window functions. The folder contains:
+	* Auto-power spectrum of:
+		* CIB-min
+		* MV
+	* Cross-spectrum of CIB-min and MV maps.
 
 ### tSZ $\times$ CIB cross-correlation:
 <p align="left">
-  <img src="plots/rho_tsz_cib.png" width="400" title="tSZ x CIB correlation">
   <img src="plots/rho_tsz_cib_corner_6bins.png" width="300" title="tSZ x CIB correlation corner plot">
+  <img src="plots/rho_tsz_cib.png" width="400" title="tSZ x CIB correlation">
 </p>
 
+* We reconstruct the scale-dependent tSZ $\times$ CIB cross-correlation. These can also be found in the [bandpowers_and_cov](https://github.com/sriniraghunathan/tSZ_2pt_SPT_SPIRE/tree/main/bandpowers_and_cov) folder.
