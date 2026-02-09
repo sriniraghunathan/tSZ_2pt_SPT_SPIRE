@@ -14,7 +14,7 @@
 
 ### Maps:
 <p align="left">
-  <img src="plots/ymap_plots_with_zoom.png" width="250" title="Compton-$y$" map>
+  <img src="plots/ymap_plots_with_zoom.png" width="500" title="Compton-$y$" map>
 </p>
 
 * We release two versions of the Compton-$y$ maps. Both these versions have the "full coadd", as well as two half-splits. These can be found inside [maps\_and\_masks] (https://github.com/sriniraghunathan/tSZ_2pt_SPT_SPIRE/tree/main/maps_and_masks) folder.
@@ -23,7 +23,7 @@
 
 ### Bandpowers:
 <p align="left">
-  <img src="plots/ymap_spectra_data_plus_others.png" width="250" title="Compton-$y$ power spectrum">
+	  <img src="plots/ymap_spectra_data_plus_others.png" width="500" title="Compton-$y$ power spectrum">
 </p>
 
 * We also release the associated bandpowers along with the bandpower covariance and the bandpower window functions. These can be found under [bandpowers\_and\_cov] (https://github.com/sriniraghunathan/tSZ_2pt_SPT_SPIRE/tree/main/bandpowers_and_cov) folder. They contain:
@@ -31,7 +31,7 @@
 
 ### tSZ $\times$ CIB cross-correlation:
 <p align="center">
-  <img src="plots/rho_tsz_cib.png" width="250" title="tSZ x CIB correlation">
-  <img src="plots/rho_tsz_cib_corner_6bins.png" width="250" title="tSZ x CIB correlation corner plot">
+  <img src="plots/rho_tsz_cib.png" width="500" title="tSZ x CIB correlation">
+  <img src="plots/rho_tsz_cib_corner_6bins.png" width="400" title="tSZ x CIB correlation corner plot">
 </p>
 
