@@ -13,7 +13,7 @@
 	* Html rendering of the above notebook: [Link](https://pole.uchicago.edu/public/data/tsz_2pt_raghunathan26/read_maps_masks_bandpowers_cov.html) 	
 
 ### Maps:
-<p align="center">
+<p align="left">
   <img src="plots/ymap_plots_with_zoom.png" width="250" title="Compton-$y$" map>
 </p>
 
@@ -22,7 +22,7 @@
 	* CIB-min: The LC combination in which the cosmic infrared background (CIB) signal is minimised.
 
 ### Bandpowers:
-<p align="center">
+<p align="left">
   <img src="plots/ymap_spectra_data_plus_others.png" width="250" title="Compton-$y$ power spectrum">
 </p>
 
