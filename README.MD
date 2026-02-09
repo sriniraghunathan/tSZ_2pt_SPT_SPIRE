@@ -17,7 +17,7 @@
   <img src="plots/ymap_plots_with_zoom.png" width="500" title="Compton-$y$" map>
 </p>
 
-* We release two versions of the Compton-$y$ maps. Both these versions have the "full coadd", as well as two half-splits. These can be found inside [maps_and_masks] (https://github.com/sriniraghunathan/tSZ_2pt_SPT_SPIRE/tree/main/maps_and_masks) folder.
+* We release two versions of the Compton-$y$ maps. Both these versions have the "full coadd", as well as two half-splits. These can be found inside [maps_and_masks](https://github.com/sriniraghunathan/tSZ_2pt_SPT_SPIRE/tree/main/maps_and_masks) folder.
 	* MV: minimum-variance (MV) linear combination (LC).
 	* CIB-min: The LC combination in which the cosmic infrared background (CIB) signal is minimised.
 
@@ -26,7 +26,7 @@
 	  <img src="plots/ymap_spectra_data_plus_others.png" width="500" title="Compton-$y$ power spectrum">
 </p>
 
-* We also release the associated bandpowers along with the bandpower covariance and the bandpower window functions. These can be found under [bandpowers_and_cov] (https://github.com/sriniraghunathan/tSZ_2pt_SPT_SPIRE/tree/main/bandpowers_and_cov) folder. They contain:
+* We also release the associated bandpowers along with the bandpower covariance and the bandpower window functions. These can be found under [bandpowers_and_cov](https://github.com/sriniraghunathan/tSZ_2pt_SPT_SPIRE/tree/main/bandpowers_and_cov) folder. They contain:
 	* Auto-power spectrum of CIB-min and MV maps, as well as the cross-spectrum between CIB-min and MV maps.
 
 ### tSZ $\times$ CIB cross-correlation:
