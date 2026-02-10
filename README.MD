@@ -1,5 +1,5 @@
 # tSZ 2pt analysis using SPT x SPIRE 
-<p align="left"><img src="plots/tsz_2pt_logo.png" width="300" title="Compton-$y$" map></p>
+<p align="left"><img src="plots/tsz_2pt_logo.png" width="400" title="Compton-$y$" map></p>
 
 ## Paper:
 * Raghunathan S., SPT-3G and SPTpol Collaboration 2026; arXiv:[xxxx.xxxxx](https://arxiv.org/abs/xxxx.xxxxx). 
