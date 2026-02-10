@@ -5,6 +5,7 @@
 
 ## Overview:
 * In this work, we reconstruct the full shape of the thermal Sunyaev–Zeldovich (tSZ) or Compton-$y$ power spectrum by optimally combining data from the South Pole Telescope (SPT) and *Herschel*-SPIRE surveys. 
+* We also reconstruct the scale-dependent correlation between tSZ and CIB signals.
 * We release the bandpowers, maps, and other associated data products here.
 
 ## Results:
@@ -12,6 +13,7 @@
 ### Code:
 * [read\_maps\_masks\_bandpowers\_cov.ipynb](https://github.com/sriniraghunathan/tSZ_2pt_SPT_SPIRE/blob/main/read_maps_masks_bandpowers_cov.ipynb): Please look into this notebook to read the data products.
 	* Html rendering of the above notebook: [Link](https://pole.uchicago.edu/public/data/tsz_2pt_raghunathan26/read_maps_masks_bandpowers_cov.html)
+* Please also check this [SPT_data_weblink](https://sptlocal.grid.uchicago.edu/~sri/tsz_2pt_raghunathan26/index_raghunathan26.html) for additional details about the data products.
 
 ### Maps:
 <p align="left">
