@@ -1,7 +1,7 @@
 # tSZ 2pt analysis using SPT x SPIRE 
 
 ## Paper:
-* Raghunathan S., SPT-3G and SPTpol Collaboration 2026; arXiv:[xxxx.xxxxx](https://arxiv.org/abs/xxxx.xxxxx). 
+* Raghunathan S., SPT-3G and SPTpol Collaboration 2026; arXiv:[2602.10107](https://arxiv.org/abs/2602.10107). 
 
 ## Overview:
 * In this work, we reconstruct the full shape of the thermal Sunyaev–Zeldovich (tSZ) or Compton-$y$ power spectrum by optimally combining data from the South Pole Telescope (SPT) and *Herschel*-SPIRE surveys. 
