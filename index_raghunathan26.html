@@ -217,7 +217,7 @@ Antarctic Support Contract<br /><br />
 <tr bgcolor="#ffffff"><td valign="top"><p class="text" align="justify">
 
 
-This page provides data products associated with the thermal Sunyaev–Zeldovich (tSZ) power spectrum measurement using observations from the SPTpol/SPT-3G/Herschel-SPIRE surveys over roughly 100 square degrees described in <a href="http://arxiv.org/abs/xxxx.xxxxx" target="_blank"> Raghunathan et al. 2026</a>.  The tSZ power spectra are presented over the multipole range 500 < &ell; <= 5000.
+This page provides data products associated with the thermal Sunyaev-Zeldovich (tSZ) power spectrum measurement using observations from the SPTpol/SPT-3G/Herschel-SPIRE surveys over roughly 100 square degrees described in <a href="http://arxiv.org/abs/2602.10107" target="_blank"> Raghunathan et al. 2026 (arXiv: 2602.10107)</a>.  The tSZ power spectra are presented over the multipole range 500 < &ell; <= 5000.
 
 <br><br>
 If you have any questions regarding this data set or its use, please contact <a href='https://sriniraghunathan.github.io/' target='_blank'>Srini Raghunathan</a> (<a href="mailto:sriniraghuna@gmail.com">sriniraghuna_at_gmail_dot_com</a>). 
@@ -314,14 +314,14 @@ Please check this <code>jupyter notebook</code> to help read the maps and the ba
             <ul>
                 <li><a href='bandpowers_and_cov/spt_100d_dl_yy_bandpowers_ycibfreexycibfree.txt'>bandpowers_and_cov/spt_100d_dl_yy_bandpowers_ycibfreexycibfree.txt<a>: Auto-power spectrum <code>CIB-min x CIB-min</code><br></li>
                 <li><a href='bandpowers_and_cov/spt_100d_dl_yy_bandpowers_ymvxymv.txt'>bandpowers_and_cov/spt_100d_dl_yy_bandpowers_ymvxymv.txt<a>: Auto-power spectrum <code>MV x MV</code><br></li>
-                <li><a href='bandpowers_and_cov/spt_100d_dl_yy_bandpowers_ycibfreexycibfree.txt'>bandpowers_and_cov/spt_100d_dl_yy_bandpowers_ycibfreexycibfree.txt<a>: Cross-power spectrum <code>MV x CIB-min</code><br></li>                    
+                <li><a href='bandpowers_and_cov/spt_100d_dl_yy_bandpowers_ycibfreexymv.txt'>bandpowers_and_cov/spt_100d_dl_yy_bandpowers_ycibfreexymv.txt<a>: Cross-power spectrum <code>MV x CIB-min</code><br></li>                    
             </ul>            
             <h3>Bandpower covariance matrices: Sum of both statistical and systematic errros.</h3>
             <code>To get the bandpower errors &delta;D<sub>&ell;</sub>[10<sup>12</sup>], you can do: np.sqrt( np.diag( dl_yy_cov ) )</code>
             <ul>
                 <li><a href='bandpowers_and_cov/spt_100d_dl_yy_cov_ycibfreexycibfree.txt'>bandpowers_and_cov/spt_100d_dl_yy_cov_ycibfreexycibfree.txt<a>: Covariance for <code>CIB-min x CIB-min</code><br></li>
                 <li><a href='bandpowers_and_cov/spt_100d_dl_yy_cov_ymvxymv.txt'>bandpowers_and_cov/spt_100d_dl_yy_cov_ymvxymv.txt<a>: Covariance for <code>MV x MV</code><br></li>
-                <li><a href='bandpowers_and_cov/spt_100d_dl_yy_cov_ycibfreexycibfree.txt'>bandpowers_and_cov/spt_100d_dl_yy_cov_ycibfreexycibfree.txt<a>: Covariance for <code>MV x CIB-min</code><br></li>                    
+                <li><a href='bandpowers_and_cov/spt_100d_dl_yy_cov_ycibfreexymv.txt'>bandpowers_and_cov/spt_100d_dl_yy_cov_ycibfreexymv.txt<a>: Covariance for <code>MV x CIB-min</code><br></li>                    
             </ul>            
             <h3>Effective beam and filter.</h3> Please look into <a href='read_maps_masks_bandpowers_cov.html' target='_blank'><code>read_maps_masks_bandpowers_cov.html</code></a> for details about beam and the filters.
             <ul>
