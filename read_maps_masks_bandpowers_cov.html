@@ -15245,7 +15245,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[3]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#load modules</span>
@@ -15282,10 +15282,10 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[8]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fname</span> <span class="o">=</span> <span class="s1">&#39;publish/bandpowers_and_cov/spt_100d_dl_yy_bandpowers_and_cov_all_estimators.npy&#39;</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fname</span> <span class="o">=</span> <span class="s1">&#39;bandpowers_and_cov/spt_100d_dl_yy_bandpowers_and_cov_all_estimators.npy&#39;</span>
 <span class="n">spt_100d_yy_dict</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">allow_pickle</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
 <span class="n">ilc_key_arr</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;ymv&#39;</span><span class="p">,</span> <span class="s1">&#39;ymv&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;ycibfree&#39;</span><span class="p">,</span> <span class="s1">&#39;ycibfree&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;ycibfree&#39;</span><span class="p">,</span> <span class="s1">&#39;ymv&#39;</span><span class="p">)]</span>
 <span class="n">el_eff</span> <span class="o">=</span> <span class="n">spt_100d_yy_dict</span><span class="p">[</span><span class="s1">&#39;el_eff&#39;</span><span class="p">]</span>
@@ -15300,10 +15300,11 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">Estimator = </span><span class="si">%s</span><span class="s1">x</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">))</span>
     <span class="n">dl_yy</span> <span class="o">=</span> <span class="n">spt_100d_yy_dict</span><span class="p">[</span><span class="n">m1m2</span><span class="p">][</span><span class="s1">&#39;bandpower&#39;</span><span class="p">]</span> <span class="c1">#Dl_yy [1e12]</span>
     <span class="n">dl_yy_err</span> <span class="o">=</span> <span class="n">spt_100d_yy_dict</span><span class="p">[</span><span class="n">m1m2</span><span class="p">][</span><span class="s1">&#39;bandpower_error&#39;</span><span class="p">]</span> <span class="c1">#Dl_yy_err [1e12] </span>
-    <span class="n">dl_yy_cov</span> <span class="o">=</span> <span class="n">spt_100d_yy_dict</span><span class="p">[</span><span class="n">m1m2</span><span class="p">][</span><span class="s1">&#39;cov&#39;</span><span class="p">]</span> <span class="c1">#Dl_yy_cov [1e12]</span>
+    <span class="n">dl_yy_cov</span> <span class="o">=</span> <span class="n">spt_100d_yy_dict</span><span class="p">[</span><span class="n">m1m2</span><span class="p">][</span><span class="s1">&#39;cov&#39;</span><span class="p">]</span> <span class="c1">#Dl_yy_cov [1e24]</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;el_eff =&#39;</span><span class="p">,</span> <span class="n">el_eff</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;dl_yy =&#39;</span><span class="p">,</span> <span class="n">dl_yy</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;dl_yy_err =&#39;</span><span class="p">,</span> <span class="n">dl_yy_err</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;dl_yy_cov_sqrt_diag =&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span> <span class="n">spt_100d_yy_dict</span><span class="p">[</span><span class="n">m1m2</span><span class="p">][</span><span class="s1">&#39;cov&#39;</span><span class="p">]</span> <span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
 </pre></div>
 
      </div>
@@ -15334,6 +15335,8 @@ Estimators are:  [&#39;el_eff&#39;, &#39;bpwf&#39;, &#39;el_min&#39;, &#39;el_ma
  0.59087548 0.654273   0.63533072]
 		 dl_yy_err = [0.20979787 0.14851846 0.1269094  0.11088423 0.09341208 0.08276539
  0.08479397 0.08692268 0.09399785]
+		 dl_yy_cov_sqrt_diag = [0.20979787 0.14851846 0.1269094  0.11088423 0.09341208 0.08276539
+ 0.08479397 0.08692268 0.09399785]
 
 	Estimator = ycibfreexycibfree
 		 el_eff = [ 750. 1250. 1750. 2250. 2750. 3250. 3750. 4250. 4750.]
@@ -15341,12 +15344,16 @@ Estimators are:  [&#39;el_eff&#39;, &#39;bpwf&#39;, &#39;el_min&#39;, &#39;el_ma
  0.58014743 0.65117204 0.62898178]
 		 dl_yy_err = [0.21750301 0.14848823 0.13705187 0.11486615 0.09548166 0.08249556
  0.08623394 0.08811555 0.09478625]
+		 dl_yy_cov_sqrt_diag = [0.21750301 0.14848823 0.13705187 0.11486615 0.09548166 0.08249556
+ 0.08623394 0.08811555 0.09478625]
 
 	Estimator = ycibfreexymv
 		 el_eff = [ 750. 1250. 1750. 2250. 2750. 3250. 3750. 4250. 4750.]
 		 dl_yy = [0.48262144 0.46112836 0.42705692 0.54636736 0.66819478 0.6208671
  0.58355304 0.65307235 0.6313517 ]
 		 dl_yy_err = [0.21164065 0.1456658  0.12998236 0.1109142  0.09293964 0.08177848
+ 0.08486734 0.08702453 0.09408163]
+		 dl_yy_cov_sqrt_diag = [0.21164065 0.1456658  0.12998236 0.1109142  0.09293964 0.08177848
  0.08486734 0.08702453 0.09408163]
 </pre>
 </div>
@@ -15386,6 +15393,45 @@ Estimators are:  [&#39;el_eff&#39;, &#39;bpwf&#39;, &#39;el_min&#39;, &#39;el_ma
 </div>
 </div>
 </div>
+</div><div id="cell-id=d4874a02" class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[21]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data_dl_yy_err</span> <span class="o">=</span> <span class="n">spt_100d_yy_dict</span><span class="p">[(</span><span class="s1">&#39;ymv&#39;</span><span class="p">,</span> <span class="s1">&#39;ymv&#39;</span><span class="p">)][</span><span class="s1">&#39;bandpower_error&#39;</span><span class="p">]</span> <span class="c1">#Dl_yy_err [1e12] </span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data_dl_yy_err</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>[0.20979787 0.14851846 0.1269094  0.11088423 0.09341208 0.08276539
+ 0.08479397 0.08692268 0.09399785]
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
 </div><div id="cell-id=4cb3ee39" class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
